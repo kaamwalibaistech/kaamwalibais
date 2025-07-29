@@ -5,6 +5,15 @@ class OurMaidsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Theme.of(context).primaryColor,
+        leading: IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_back_ios_rounded),
+        ),
+        title: Text("Our Maids"),
+      ),
+    );
   }
 }

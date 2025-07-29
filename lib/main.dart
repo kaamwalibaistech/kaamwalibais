@@ -8,14 +8,16 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kaamwalibais',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          primary: Color(0xff7400b9),
+          seedColor: Color(0xff7400b9),
+        ),
       ),
       home: const NavigationScreen(),
     );
