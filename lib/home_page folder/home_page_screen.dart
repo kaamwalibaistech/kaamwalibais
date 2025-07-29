@@ -39,13 +39,41 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.search, size: 30, weight: 12),
+
           ),
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[const Text('HomePage Screen')],
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.18,
+
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 224, 221, 221),
+                ),
+                child: Center(child: Text("Image")),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+              ),
+              // GridView.builder(
+              //   shrinkWrap: true,
+              //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //     crossAxisCount: 2,
+              //   ),
+              //   itemBuilder:
+              //       (BuildContext, context) => Container(
+              //         height: 10,
+              //         width: 10,
+              //         decoration: BoxDecoration(color: Colors.black),
+              //       ),
+              // ),
+            ],
+          ),
         ),
       ),
     );

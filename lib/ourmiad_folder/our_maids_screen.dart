@@ -5,6 +5,9 @@ class OurMaidsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // <<<<<<< HEAD
+    //     return const Scaffold(body: Center(child: Text("Our Maids Screen")));
+    // =======
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -97,5 +100,6 @@ class OurMaidsScreen extends StatelessWidget {
         },
       ),
     );
+    // >>>>>>> 19a109dae15fa07f04f297b7688c1762783c2f08
   }
 }
