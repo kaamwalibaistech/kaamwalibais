@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
         shape: Border(bottom: BorderSide.none),
 
+// <<<<<<< ritesh
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -115,17 +116,32 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(height: 10),
             ],
           ),
+// =======
+//         child: Column(
+//           children: [
+//             Container(
+//               height: MediaQuery.of(context).size.height * 0.20,
+//               decoration: BoxDecoration(
+//                 color: Theme.of(context).colorScheme.primary,
+//               ),
+//             ),
+//           ],
+// >>>>>>> main
         ),
       ),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          widget.title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          Icon(Icons.share),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Icon(Icons.search),
+          SizedBox(width: 5),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.search, size: 30, weight: 12),
+
           ),
         ],
       ),
