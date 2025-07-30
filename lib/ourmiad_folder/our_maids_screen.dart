@@ -19,7 +19,7 @@ class OurMaidsScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(12),
-        itemCount: 10,
+        itemCount: 100,
         itemBuilder: (context, index) {
           return Container(
             padding: EdgeInsets.all(10),
