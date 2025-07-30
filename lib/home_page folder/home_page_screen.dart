@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -22,177 +20,138 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     _controller = YoutubePlayerController(
       initialVideoId: videoId ?? "",
-      flags: YoutubePlayerFlags(autoPlay: false),
+      flags: YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
     );
     log(videoId.toString());
   }
 
-  // final YoutubePlayerController _controller = YoutubePlayerController(
-  //   initialVideoId: 'iLnmTe5Q2Qw',
-  //   flags: YoutubePlayerFlags(autoPlay: true, mute: true),
-  // );
+  List<Map> logo = [
+    {"logo": "lib/assets/twitter.png", "url": ""},
+    {"logo": "lib/assets/facebook.png", "url": ""},
+    {"logo": "lib/assets/linkedin.png", "url": ""},
+    {"logo": "lib/assets/youtube.png", "url": ""},
+  ];
+
+  List<Map<String, String>> services = [
+    {"image": "lib/assets/test.jpg", "name": "Maid"},
+    {"image": "lib/assets/test.jpg", "name": "Babysitter"},
+    {"image": "lib/assets/test.jpg", "name": "Cook"},
+    {"image": "lib/assets/test.jpg", "name": "Elder Care"},
+    {"image": "lib/assets/test.jpg", "name": "Patient Care"},
+    {"image": "lib/assets/test.jpg", "name": "Japa Maids"},
+    {"image": "lib/assets/test.jpg", "name": "Pet Care"},
+    {"image": "lib/assets/test.jpg", "name": "Driver"},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    List<String> listviewData = [
-      "Home",
-      "About us",
-      "What we offer",
-      "How it works",
-      "Book maid",
-      "Feedback",
-      "Contact us",
-      "Term & conditions",
-      "Privacy Policy",
-    ];
     return Scaffold(
-      drawer: Drawer(
-        shape: Border(bottom: BorderSide.none),
-
-// <<<<<<< ritesh
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Image.asset("lib/assets/whatsapp.png", height: 40),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(
           child: Column(
-            children: [
+            children: <Widget>[
               Container(
-                height: MediaQuery.of(context).size.height * 0.20,
-                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.18,
+
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: const Color.fromARGB(255, 224, 221, 221),
                 ),
-                child: Center(
-                  child: Text(
-                    "Image Data",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                child: Center(child: Text("Image Data")),
               ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+              ),
+              GridView.builder(
                 shrinkWrap: true,
-                itemCount: 9,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: services.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30.0),
-                      child: Text(listviewData[index]),
+                  return Card(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                          child: Image.asset(
+                            services[index]["image"] ?? "lib/assets/test.jpg",
+                            width: 180,
+                            height: 200,
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            services[index]["name"] ?? "Image Data",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
-              Divider(),
-              SizedBox(height: 10),
+              SizedBox(height: 12),
               Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.share,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text("Share", style: TextStyle(fontSize: 16)),
-                    ),
-                  ],
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text("HOW IT WORKS", style: TextStyle(fontSize: 20)),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset("lib/assets/test.jpg", fit: BoxFit.cover),
+              ),
+
+              SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text("VIDEO", style: TextStyle(fontSize: 20)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 2,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: YoutubePlayer(
+                    controller: _controller,
+                    showVideoProgressIndicator: true,
+                  ),
                 ),
               ),
-              SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.logout,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text("Log out", style: TextStyle(fontSize: 16)),
-                    ),
-                  ],
-                ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                    logo
+                        .map(
+                          (logo) => Padding(
+                            padding: const EdgeInsets.only(
+                              right: 8,
+                              top: 10,
+                              bottom: 30,
+                            ),
+                            child: Image.asset(logo['logo'], height: 40),
+                          ),
+                        )
+                        .toList(),
               ),
-              SizedBox(height: 10),
             ],
-          ),
-// =======
-//         child: Column(
-//           children: [
-//             Container(
-//               height: MediaQuery.of(context).size.height * 0.20,
-//               decoration: BoxDecoration(
-//                 color: Theme.of(context).colorScheme.primary,
-//               ),
-//             ),
-//           ],
-// >>>>>>> main
-        ),
-      ),
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.primary,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          widget.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          SizedBox(width: 5),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.search, size: 30, weight: 12),
-
-          ),
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.18,
-
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 224, 221, 221),
-                  ),
-                  child: Center(child: Text("Image Data")),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
-                ),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    crossAxisCount: 2,
-                  ),
-                  itemCount: 8,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 224, 221, 221),
-                      ),
-                      child: Center(child: Text("Image Data")),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-
-                YoutubePlayerBuilder(
-                  player: YoutubePlayer(controller: _controller),
-                  builder: (p0, p1) {
-                    return Column(children: [p1]);
-                  },
-                ),
-              ],
-            ),
           ),
         ),
       ),
