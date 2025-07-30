@@ -1,14 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 
 class NavigationScreen extends StatefulWidget {
-  const NavigationScreen({super.key});
+  final int destinations;
+  const NavigationScreen({super.key, this.destinations = 0});
 
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
@@ -21,6 +19,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     OurMaidsScreen(),
     ProfileScreen(),
   ];
+
   int index = 0;
   int navigationSelectedInx = 0;
   Future<bool> _onWillPop() async {
@@ -52,24 +51,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   @override
+  void initState() {
+    index = widget.destinations;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) async {
-        if (index == 0) {
-          final shouldExit = await _onWillPop();
-          if (shouldExit) {
-            if (Platform.isAndroid) {
-              SystemNavigator.pop();
-            } else {
-              exit(0);
-            }
-          }
-        } else {
-          setState(() {
-            index = 0;
-          });
-        }
-      },
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => _onWillPop(),
       child: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: Theme.of(context).colorScheme.primary,
