@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
+import 'package:kaamwaalibais/single_pages/review_page.dart';
 
 class NavigationScreen extends StatefulWidget {
   final int destinations;
@@ -144,6 +146,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                               setState(() {
                                 navigationSelectedInx = index;
                               });
+                              _visiPage(index);
                             },
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all<Color>(
@@ -215,13 +218,58 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   List<String> listviewData = [
     "Home",
-    "About us",
+    "Book maid",
     "What we offer",
     "How it works",
-    "Book maid",
-    "Feedback",
+    "About us",
+    "Reviews",
     "Contact us",
     "Term & conditions",
     "Privacy Policy",
   ];
+
+  void _visiPage(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.pop(context);
+        }
+        break;
+      case 1:
+        {
+          log('${1000000 * 84}');
+        }
+        break;
+      case 2:
+        {}
+        break;
+      case 3:
+        {}
+        break;
+      case 4:
+        {}
+        break;
+      case 5:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ReviewPage()),
+          );
+        }
+        break;
+      case 6:
+        {}
+        break;
+      case 7:
+        {}
+        break;
+      case 8:
+        {}
+        break;
+
+      default:
+        {}
+        break;
+    }
+  }
 }
