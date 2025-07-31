@@ -63,22 +63,22 @@ class ProfileScreen extends StatelessWidget {
                 height: 100,
                 child: Card(
                   margin: EdgeInsets.all(10),
-                  elevation: 0,
+                  elevation: 1,
+                  shadowColor: Theme.of(context).colorScheme.primaryContainer,
                   color: Colors.white,
-                  child: Center(
-                    child: ListTile(
-                      title: Text(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.manage_accounts_outlined),
+                      SizedBox(width: 12),
+                      Text(
                         "Manage Your Profile",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
                         ),
                       ),
-                      trailing: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.edit),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -86,15 +86,14 @@ class ProfileScreen extends StatelessWidget {
                 height: 100,
                 child: Card(
                   margin: EdgeInsets.all(10),
-                  elevation: 0,
+                  elevation: 1,
+                  shadowColor: Theme.of(context).colorScheme.primaryContainer,
                   color: Colors.white,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.logout_rounded),
-                      ),
+                      Icon(Icons.logout_rounded),
+                      SizedBox(width: 8),
                       Text(
                         "Sign Out",
                         style: TextStyle(
