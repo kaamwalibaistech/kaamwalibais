@@ -87,7 +87,7 @@ class _ReviewPageSate extends State<ReviewPage> {
                                 reviewModel
                                         ?.getTestimonialList?[index]
                                         .rating ??
-                                    "0",
+                                    "0.0",
                               ),
                             ),
                           ),

@@ -46,122 +46,116 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.blue, // Change to your color
-        statusBarIconBrightness: Brightness.light,
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Image.asset("lib/assets/whatsapp.png", height: 40),
       ),
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: Image.asset("lib/assets/whatsapp.png", height: 40),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.18,
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.18,
 
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 224, 221, 221),
-                  ),
-                  child: Center(child: Text("Image Data")),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 224, 221, 221),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+                child: Center(child: Text("Image Data")),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+              ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
                 ),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 10,
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: services.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
-                            ),
-                            child: Image.asset(
-                              services[index]["image"] ?? "lib/assets/test.jpg",
-                              width: 180,
-                              height: 200,
-                              fit: BoxFit.fitHeight,
-                            ),
+                itemCount: services.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              services[index]["name"] ?? "Image Data",
-                              style: TextStyle(fontSize: 16),
-                            ),
+                          child: Image.asset(
+                            services[index]["image"] ?? "lib/assets/test.jpg",
+                            width: 180,
+                            height: 200,
+                            fit: BoxFit.fitHeight,
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text("HOW IT WORKS", style: TextStyle(fontSize: 20)),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    "lib/assets/kwbmaid.jpeg",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-                SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text("VIDEO", style: TextStyle(fontSize: 20)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 2,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: YoutubePlayer(
-                      controller: _controller,
-                      showVideoProgressIndicator: true,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            services[index]["name"] ?? "Image Data",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ],
                     ),
+                  );
+                },
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text("HOW IT WORKS", style: TextStyle(fontSize: 20)),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  "lib/assets/kwbmaid.jpeg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+              SizedBox(height: 25),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text("VIDEO", style: TextStyle(fontSize: 20)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 2,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: YoutubePlayer(
+                    controller: _controller,
+                    showVideoProgressIndicator: true,
                   ),
                 ),
+              ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:
-                      logo
-                          .map(
-                            (logo) => Padding(
-                              padding: const EdgeInsets.only(
-                                right: 8,
-                                top: 10,
-                                bottom: 30,
-                              ),
-                              child: Image.asset(logo['logo'], height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                    logo
+                        .map(
+                          (logo) => Padding(
+                            padding: const EdgeInsets.only(
+                              right: 8,
+                              top: 10,
+                              bottom: 30,
                             ),
-                          )
-                          .toList(),
-                ),
-              ],
-            ),
+                            child: Image.asset(logo['logo'], height: 40),
+                          ),
+                        )
+                        .toList(),
+              ),
+            ],
           ),
         ),
       ),
