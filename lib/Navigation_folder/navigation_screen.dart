@@ -237,7 +237,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
         break;
       case 1:
         {
-          log('${1000000 * 84}');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BookmaidScreen()),
+          );
         }
         break;
       case 2:
