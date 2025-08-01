@@ -174,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
   );
   Widget _reviewsSection() => Container(
     width: double.infinity,
-    padding: EdgeInsets.all(20),
+    padding: EdgeInsets.only(top: 25, right: 10, left: 10),
     decoration: BoxDecoration(
       color: Colors.amber.shade200,
       borderRadius: BorderRadius.only(
@@ -222,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
       options: CarouselOptions(
-        height: MediaQuery.of(context).size.height * 0.20,
+        height: MediaQuery.of(context).size.height * 0.22,
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 1,
