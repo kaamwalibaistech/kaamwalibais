@@ -20,7 +20,7 @@ class _ReviewPageSate extends State<ReviewPage> {
   }
 
   void getData() async {
-    final apicall = await homePageApi();
+    final apicall = await reviewsApi();
     setState(() {
       reviewModel = apicall;
     });
