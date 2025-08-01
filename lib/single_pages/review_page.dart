@@ -75,7 +75,7 @@ class _ReviewPageSate extends State<ReviewPage> {
                           ),
                           SizedBox(height: 10),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.34,
+                            width: MediaQuery.of(context).size.width * 0.38,
 
                             child: EasyStarsRating(
                               readOnly: true,
