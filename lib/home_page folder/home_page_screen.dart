@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -69,9 +70,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: Center(child: Text("Image Data")),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+                  ),
                 ),
                 GridView.builder(
                   shrinkWrap: true,
