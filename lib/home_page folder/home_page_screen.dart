@@ -5,12 +5,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// <<<<<<< ritesh
-// import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
-// =======
+
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
-// >>>>>>> main
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -119,33 +116,33 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   );
 
-// <<<<<<< ritesh
-//                   decoration: BoxDecoration(
-//                     color: const Color.fromARGB(255, 224, 221, 221),
-//                   ),
-//                   child: Center(child: Text("Image Data")),
-//                 ),
-//                 GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => LoginScreen()),
-//                     );
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.symmetric(vertical: 15.0),
-//                     child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
-//                   ),
-//                 ),
-//                 GridView.builder(
-//                   shrinkWrap: true,
-//                   physics: NeverScrollableScrollPhysics(),
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     mainAxisSpacing: 15,
-//                     crossAxisSpacing: 10,
-//                     crossAxisCount: 2,
-//                     childAspectRatio: 0.75,
-// =======
+  // <<<<<<< ritesh
+  //                   decoration: BoxDecoration(
+  //                     color: const Color.fromARGB(255, 224, 221, 221),
+  //                   ),
+  //                   child: Center(child: Text("Image Data")),
+  //                 ),
+  //                 GestureDetector(
+  //                   onTap: () {
+  //                     Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(builder: (context) => LoginScreen()),
+  //                     );
+  //                   },
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.symmetric(vertical: 15.0),
+  //                     child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
+  //                   ),
+  //                 ),
+  //                 GridView.builder(
+  //                   shrinkWrap: true,
+  //                   physics: NeverScrollableScrollPhysics(),
+  //                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //                     mainAxisSpacing: 15,
+  //                     crossAxisSpacing: 10,
+  //                     crossAxisCount: 2,
+  //                     childAspectRatio: 0.75,
+  // =======
   Widget _servicesSection() => Column(
     // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -178,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 200,
                       fit: BoxFit.fitHeight,
                     ),
-// >>>>>>> main
+                    // >>>>>>> main
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
