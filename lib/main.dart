@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/utils/font.dart';
+import 'package:provider/provider.dart';
+
+import 'providers/homepage_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => HomepageProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
