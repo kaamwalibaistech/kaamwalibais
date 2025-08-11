@@ -1,14 +1,12 @@
-import 'dart:developer';
-
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:kaamwaalibais/models/home_model.dart';
-import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/providers/homepage_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import 'shimmers/homepage_shimmer.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,18 +17,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late YoutubePlayerController _controller;
+  late HomepageProvider homePro;
   HomeModel? homeModel;
   @override
   void initState() {
     super.initState();
-    getReady();
-  }
-
-  getReady() async {
-    final apicall = await homePageApi();
-    setState(() {
-      homeModel = apicall;
-    });
     final videoId = YoutubePlayer.convertUrlToId(
       homeModel?.getVideoUrl ??
           "https://youtu.be/olDOicf6xIM?si=M3oh9W-j-hKgI6sF",
@@ -39,7 +30,22 @@ class _MyHomePageState extends State<MyHomePage> {
       initialVideoId: videoId ?? "",
       flags: YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
     );
-    log(videoId.toString());
+
+    getReady();
+  }
+
+  getReady() async {
+    homePro = Provider.of<HomepageProvider>(context, listen: false);
+    // final apicall = await homePageApi();
+    // setState(() {
+    //   homeModel = apicall;
+    // });
+    final apicall = await homePro.getHomeData();
+    setState(() {
+      homeModel = apicall;
+    });
+
+    // log(videoId.toString());
   }
 
   List<Map> logo = [
@@ -62,35 +68,37 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayerBuilder(
-      player: YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-      ),
-      builder: (context, player) {
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: Image.asset("lib/assets/whatsapp.png", height: 40),
+    return homePro.isloading == true
+        ? shimmerHomeScreen()
+        : YoutubePlayerBuilder(
+          player: YoutubePlayer(
+            controller: _controller,
+            showVideoProgressIndicator: true,
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  _headerSection(),
-                  _servicesSection(),
-                  _howItWorksSection(),
-                  _reviewsSection(),
-                  _videoSection(player),
-                  _socialSection(),
-                ],
+          builder: (context, player) {
+            return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {},
+                child: Image.asset("lib/assets/whatsapp.png", height: 40),
               ),
-            ),
-          ),
+              body: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _headerSection(),
+                      _servicesSection(),
+                      _howItWorksSection(),
+                      _reviewsSection(),
+                      _videoSection(player),
+                      _socialSection(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
-      },
-    );
   }
 
   Widget _headerSection() => CarouselSlider.builder(
@@ -112,39 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
       autoPlayCurve: Curves.easeInOut,
       autoPlayAnimationDuration: const Duration(milliseconds: 800),
       enableInfiniteScroll: true,
-      // padEnds: true,
     ),
   );
 
-  // <<<<<<< ritesh
-  //                   decoration: BoxDecoration(
-  //                     color: const Color.fromARGB(255, 224, 221, 221),
-  //                   ),
-  //                   child: Center(child: Text("Image Data")),
-  //                 ),
-  //                 GestureDetector(
-  //                   onTap: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(builder: (context) => LoginScreen()),
-  //                     );
-  //                   },
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.symmetric(vertical: 15.0),
-  //                     child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
-  //                   ),
-  //                 ),
-  //                 GridView.builder(
-  //                   shrinkWrap: true,
-  //                   physics: NeverScrollableScrollPhysics(),
-  //                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //                     mainAxisSpacing: 15,
-  //                     crossAxisSpacing: 10,
-  //                     crossAxisCount: 2,
-  //                     childAspectRatio: 0.75,
-  // =======
   Widget _servicesSection() => Column(
-    // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -192,7 +171,6 @@ class _MyHomePageState extends State<MyHomePage> {
   );
 
   Widget _howItWorksSection() => Column(
-    // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -202,8 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
   );
   Widget _reviewsSection() => Container(
-    width: double.infinity,
-    padding: EdgeInsets.only(top: 25, right: 10, left: 10),
+    // width: double.infinity,
+    padding: EdgeInsets.only(top: 23, right: 10, left: 10),
     decoration: BoxDecoration(
       color: Colors.amber.shade200,
       borderRadius: BorderRadius.only(
@@ -220,9 +198,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 homeModel?.getTestimonialList?[index].name ?? "NA",
                 style: TextStyle(fontSize: 20),
               ),
-              SizedBox(height: 10),
+              // SizedBox(height: 10),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.34,
+                width: MediaQuery.of(context).size.width * 0.36,
 
                 child: EasyStarsRating(
                   readOnly: true,
@@ -236,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
 
-              SizedBox(height: 15),
+              SizedBox(height: 12),
               Text(
                 homeModel?.getTestimonialList?[index].description ?? "NA",
                 textAlign: TextAlign.justify,
@@ -251,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
       options: CarouselOptions(
-        height: MediaQuery.of(context).size.height * 0.22,
+        // height: MediaQuery.of(context).size.height * 0.22,
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 1,

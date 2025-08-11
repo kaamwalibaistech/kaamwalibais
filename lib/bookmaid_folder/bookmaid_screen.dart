@@ -12,7 +12,13 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
   String? selectedGender;
   bool isLoading = false;
 
-  List<String> maidForOptions = ['House Cleaning', 'Cooking', 'Baby Care'];
+  List<String> maidForOptions = [
+    'House Maid',
+    'Elder Care',
+    'House Cleaning',
+    'Cooking',
+    'Baby Sitter',
+  ];
   List<String> requirementOptions = ['Full Time', 'Part Time'];
 
   String? selectedMaidFor;

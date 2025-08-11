@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
-import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 import 'package:kaamwaalibais/single_pages/review_page.dart';
 
@@ -19,7 +17,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   List<Widget> navigationList = [
     MyHomePage(),
     BookmaidScreen(),
-    OurMaidsScreen(),
+    LoginLandingScreen(),
     ProfileScreen(),
   ];
 
