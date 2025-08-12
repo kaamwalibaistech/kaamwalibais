@@ -55,6 +55,13 @@ Future<GetUserlogIn?> getUserLogIn(phoneNumber) async {
       return GetUserlogIn.fromJson(data);
     } else if (response.statusCode == 500) {
       return null;
+    }
+  } catch (e) {
+    log(e.toString());
+  }
+  return null;
+}
+
 // =======
 Future<WhatweareModel?> whatWeOffer() async {
   try {
@@ -64,7 +71,7 @@ Future<WhatweareModel?> whatWeOffer() async {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return WhatweareModel.fromJson(data);
-// >>>>>>> main
+      // >>>>>>> main
     }
   } catch (e) {
     log(e.toString());
