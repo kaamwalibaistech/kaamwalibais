@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:kaamwaalibais/models/home_model.dart';
-import 'package:kaamwaalibais/models/how_works.dart';
+import 'package:kaamwaalibais/models/how_works_model.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
