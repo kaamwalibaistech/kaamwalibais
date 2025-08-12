@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
@@ -5,7 +7,13 @@ import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 import 'package:kaamwaalibais/single_pages/review_page.dart';
+// <<<<<<< ritesh
 import 'package:kaamwaalibais/utils/local_storage.dart';
+// =======
+import 'package:kaamwaalibais/single_pages/what_we_offer.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+// >>>>>>> main
 
 class NavigationScreen extends StatefulWidget {
   final int destinations;
@@ -73,6 +81,29 @@ class _NavigationScreenState extends State<NavigationScreen> {
     });
   }
 
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void shareApp() {
+    const url =
+        'https://play.google.com/store/apps/details?id=com.innowrap.user.kaamwalibais&pcampaignid=web_share';
+    try {
+      Share.share(
+        '$url\n\nExperience live news, Latest articles, and more — all in one app!',
+      );
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading || navigationList.isEmpty) {
@@ -113,7 +144,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   actions: [
-                    Image.asset("lib/assets/whatsapp.png", height: 35),
+// <<<<<<< ritesh
+//                     Image.asset("lib/assets/whatsapp.png", height: 35),
+// =======
+                    IconButton(
+                      onPressed:
+                          () => _launchUrl("https://wa.me/+919819221144"),
+                      icon: Image.asset("lib/assets/whatsapp.png", height: 35),
+                    ),
+// >>>>>>> main
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: IconButton(
@@ -202,8 +241,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             children: [
                               const Divider(),
                               TextButton.icon(
-                                onPressed: () {},
-                                label: const Text(
+// <<<<<<< ritesh
+//                                 onPressed: () {},
+//                                 label: const Text(
+// =======
+                                onPressed: () => shareApp(),
+                                label: Text(
+// >>>>>>> main
                                   "Share",
                                   style: TextStyle(fontSize: 16),
                                 ),
@@ -250,10 +294,33 @@ class _NavigationScreenState extends State<NavigationScreen> {
         Navigator.pop(context);
         break;
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => BookmaidScreen()),
-        );
+// <<<<<<< ritesh
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(builder: (context) => BookmaidScreen()),
+//         );
+// =======
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BookmaidScreen()),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WhatWeOffer()),
+          );
+        }
+        break;
+      case 3:
+        {}
+        break;
+      case 4:
+        {}
+// >>>>>>> main
         break;
       case 5:
         Navigator.push(

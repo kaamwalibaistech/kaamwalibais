@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/providers/homepage_provider.dart';
+import 'package:kaamwaalibais/utils/reviews.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import 'services_details_page.dart';
 import 'shimmers/homepage_shimmer.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -44,8 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       homeModel = apicall;
     });
-
-    // log(videoId.toString());
   }
 
   List<Map> logo = [
@@ -56,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   List<Map<String, String>> services = [
-    {"image": "lib/assets/maid.jpg", "name": "Maid"},
+    {"image": "lib/assets/maid.jpg", "name": "Maids"},
     {"image": "lib/assets/babysitter.jpeg", "name": "Babysitter"},
     {"image": "lib/assets/cook.jpeg", "name": "Cook"},
     {"image": "lib/assets/eldercare.jpeg", "name": "Elder Care"},
@@ -65,6 +68,17 @@ class _MyHomePageState extends State<MyHomePage> {
     {"image": "lib/assets/petcare.jpeg", "name": "Pet Care"},
     {"image": "lib/assets/driver.jpeg", "name": "Driver"},
   ];
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
             controller: _controller,
             showVideoProgressIndicator: true,
           ),
+
           builder: (context, player) {
             return Scaffold(
               floatingActionButton: FloatingActionButton(
-                onPressed: () {},
+                // onPressed: () => _launchUrl("https://drive.google.com"),
+                onPressed: () => _launchUrl("https://wa.me/+919819221144"),
                 child: Image.asset("lib/assets/whatsapp.png", height: 40),
               ),
               body: Padding(
@@ -140,30 +156,42 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         itemCount: services.length,
         itemBuilder:
-            (context, index) => Card(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(10),
-                    ),
-                    child: Image.asset(
-                      services[index]["image"]!,
-                      width: 180,
-                      height: 200,
-                      fit: BoxFit.fitHeight,
-                    ),
-                    // >>>>>>> main
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      services[index]["name"]!,
-                      style: const TextStyle(fontSize: 16),
+            (context, index) => GestureDetector(
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ServicesDetailsPage(
+                            serviceName: services[index]["name"] ?? "maids",
+                            // image: services[index]["image"] ?? "",
+                          ),
                     ),
                   ),
-                ],
+              child: Card(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(10),
+                      ),
+                      child: Image.asset(
+                        services[index]["image"]!,
+                        width: 180,
+                        height: 200,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        services[index]["name"]!,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
       ),
