@@ -323,9 +323,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
           );
         }
         break;
-      case 4:
+      case 4: //about us
         {}
-        // >>>>>>> main
+
         break;
       case 5:
         Navigator.push(
@@ -333,14 +333,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
           MaterialPageRoute(builder: (context) => ReviewPage()),
         );
         break;
-      case 6:
+      case 6: //contact us
         {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TermConditionPage()),
-            );
-          }
+          // {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => TermConditionPage()),
+          //   );
+          // }
         }
         break;
       case 7:

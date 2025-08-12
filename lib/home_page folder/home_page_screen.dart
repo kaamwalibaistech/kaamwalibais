@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
@@ -122,9 +123,15 @@ class _MyHomePageState extends State<MyHomePage> {
     itemBuilder: (context, index, realIndex) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.network(
-          homeModel!.getSliderList?[index].photo ?? "",
+        child: CachedNetworkImage(
+          imageUrl: homeModel!.getSliderList?[index].photo ?? "",
           fit: BoxFit.fill,
+          placeholder:
+              (context, url) => Container(
+                height: MediaQuery.of(context).size.height * 0.25,
+                width: double.maxFinite,
+                color: Colors.deepPurpleAccent.shade100,
+              ),
         ),
       );
     },
