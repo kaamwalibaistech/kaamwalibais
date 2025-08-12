@@ -9,17 +9,11 @@ import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 import 'package:kaamwaalibais/single_pages/how_works_page.dart';
 import 'package:kaamwaalibais/single_pages/privacy_policy.dart';
 import 'package:kaamwaalibais/single_pages/review_page.dart';
-
 import 'package:kaamwaalibais/single_pages/term_condtion.dart';
-
-
-import 'package:kaamwaalibais/utils/local_storage.dart';
-
-
 import 'package:kaamwaalibais/single_pages/what_we_offer.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 class NavigationScreen extends StatefulWidget {
   final int destinations;
@@ -150,15 +144,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   actions: [
-// <<<<<<< ritesh
-//                     Image.asset("lib/assets/whatsapp.png", height: 35),
-// =======
+                    // <<<<<<< ritesh
+                    //                     Image.asset("lib/assets/whatsapp.png", height: 35),
+                    // =======
                     IconButton(
                       onPressed:
                           () => _launchUrl("https://wa.me/+919819221144"),
                       icon: Image.asset("lib/assets/whatsapp.png", height: 35),
                     ),
-// >>>>>>> main
+                    // >>>>>>> main
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: IconButton(
@@ -247,13 +241,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             children: [
                               const Divider(),
                               TextButton.icon(
-// <<<<<<< ritesh
-//                                 onPressed: () {},
-//                                 label: const Text(
-// =======
+                                // <<<<<<< ritesh
+                                //                                 onPressed: () {},
+                                //                                 label: const Text(
+                                // =======
                                 onPressed: () => shareApp(),
                                 label: Text(
-// >>>>>>> main
+                                  // >>>>>>> main
                                   "Share",
                                   style: TextStyle(fontSize: 16),
                                 ),
@@ -300,12 +294,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
         Navigator.pop(context);
         break;
       case 1:
-// <<<<<<< ritesh
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(builder: (context) => BookmaidScreen()),
-//         );
-// =======
+        // <<<<<<< ritesh
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(builder: (context) => BookmaidScreen()),
+        //         );
+        // =======
         {
           Navigator.push(
             context,
@@ -331,7 +325,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         break;
       case 4:
         {}
-// >>>>>>> main
+        // >>>>>>> main
         break;
       case 5:
         Navigator.push(
@@ -339,7 +333,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           MaterialPageRoute(builder: (context) => ReviewPage()),
         );
         break;
-  case 6:
+      case 6:
         {
           {
             Navigator.push(
@@ -369,7 +363,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
           }
         }
         break;
-
 
       default:
         break;
