@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
 
-import '../models/how_works.dart';
+import '../models/how_works_model.dart';
 
 class HowWorksPage extends StatefulWidget {
   const HowWorksPage({super.key});
