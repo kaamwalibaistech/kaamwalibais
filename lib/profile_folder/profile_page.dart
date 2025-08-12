@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -80,26 +88,39 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 100,
-                child: Card(
-                  margin: EdgeInsets.all(10),
-                  elevation: 1,
-                  shadowColor: Theme.of(context).colorScheme.primaryContainer,
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.logout_rounded),
-                      SizedBox(width: 8),
-                      Text(
-                        "Sign Out",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
+              GestureDetector(
+                onTap: () async {
+                  // Clear local storage
+                  await LocalStoragePref.instance!.clearAllPref();
+
+                  // Navigate to login screen and remove all previous routes
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false,
+                  );
+                },
+                child: SizedBox(
+                  height: 100,
+                  child: Card(
+                    margin: EdgeInsets.all(10),
+                    elevation: 1,
+                    shadowColor: Theme.of(context).colorScheme.primaryContainer,
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.logout_rounded),
+                        SizedBox(width: 8),
+                        Text(
+                          "Sign Out",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
