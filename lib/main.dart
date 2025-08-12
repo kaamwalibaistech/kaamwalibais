@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/providers/reviewpage_provider.dart';
 import 'package:kaamwaalibais/utils/font.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'providers/homepage_provider.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await LocalStoragePref.instance?.initPrefBox();
+  });
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomepageProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewpageProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
+    final textTheme = createTextTheme(context, "Poppins", "Poppins");
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -19,8 +37,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: textTheme,
         colorScheme: ColorScheme.fromSeed(
-          primary: Color(0xff7400b9),
-          seedColor: Color(0xff7400b9),
+          primary: const Color(0xff7400b9),
+          seedColor: const Color(0xff7400b9),
         ),
       ),
       home: const NavigationScreen(),

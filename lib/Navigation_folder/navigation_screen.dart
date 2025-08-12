@@ -3,9 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
+import 'package:kaamwaalibais/single_pages/how_works_page.dart';
+import 'package:kaamwaalibais/single_pages/privacy_policy.dart';
 import 'package:kaamwaalibais/single_pages/review_page.dart';
+import 'package:kaamwaalibais/single_pages/term_condtion.dart';
+import 'package:kaamwaalibais/single_pages/what_we_offer.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NavigationScreen extends StatefulWidget {
   final int destinations;
@@ -16,15 +24,13 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  List<Widget> navigationList = [
-    MyHomePage(),
-    BookmaidScreen(),
-    OurMaidsScreen(),
-    ProfileScreen(),
-  ];
+  bool? isLoggedin;
+  List<Widget> navigationList = [];
+  bool isLoading = true;
 
   int index = 0;
   int navigationSelectedInx = 0;
+
   Future<bool> _onWillPop() async {
     return await showDialog<bool>(
           context: context,
@@ -34,11 +40,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 content: const Text("Do you really want to exit the app?"),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(false), // Cancel
+                    onPressed: () => Navigator.of(context).pop(false),
                     child: const Text("Cancel"),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(true), // Exit
+                    onPressed: () => Navigator.of(context).pop(true),
                     child: const Text("Exit"),
                   ),
                 ],
@@ -55,12 +61,55 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   void initState() {
-    index = widget.destinations;
     super.initState();
+    index = widget.destinations;
+    _loadLoginState();
+  }
+
+  void _loadLoginState() async {
+    await LocalStoragePref.instance?.initPrefBox(); // Ensure initialized
+    final loggedIn = LocalStoragePref.instance?.getLoginBool() ?? false;
+    setState(() {
+      isLoggedin = loggedIn;
+      navigationList = [
+        MyHomePage(),
+        isLoggedin! ? BookmaidScreen() : LoginLandingScreen(),
+        isLoggedin! ? OurMaidsScreen() : LoginLandingScreen(),
+        isLoggedin! ? ProfileScreen() : LoginLandingScreen(),
+      ];
+      isLoading = false;
+    });
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void shareApp() {
+    const url =
+        'https://play.google.com/store/apps/details?id=com.innowrap.user.kaamwalibais&pcampaignid=web_share';
+    try {
+      Share.share(
+        '$url\n\nExperience live news, Latest articles, and more — all in one app!',
+      );
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading || navigationList.isEmpty) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => _onWillPop(),
@@ -71,7 +120,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           currentIndex: index,
           onTap: onTapChange,
           type: BottomNavigationBarType.fixed,
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
               icon: Icon(Icons.manage_search_rounded),
@@ -90,13 +139,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ? AppBar(
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   backgroundColor: Colors.transparent,
-                  title: Text(
+                  title: const Text(
                     "Kaamwalibais",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   actions: [
-                    Image.asset("lib/assets/whatsapp.png", height: 35),
-
+                    // <<<<<<< ritesh
+                    //                     Image.asset("lib/assets/whatsapp.png", height: 35),
+                    // =======
+                    IconButton(
+                      onPressed:
+                          () => _launchUrl("https://wa.me/+919819221144"),
+                      icon: Image.asset("lib/assets/whatsapp.png", height: 35),
+                    ),
+                    // >>>>>>> main
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: IconButton(
@@ -117,7 +173,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         drawer:
             index == 0
                 ? Drawer(
-                  shape: Border(bottom: BorderSide.none),
+                  shape: const Border(bottom: BorderSide.none),
                   child: Column(
                     children: [
                       Container(
@@ -129,13 +185,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         child: Image.asset("lib/assets/kaamwalibais.png"),
                       ),
                       ListView.builder(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 30,
                           right: 30,
                           top: 25,
                           bottom: 5,
                         ),
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemExtent: 42,
                         itemCount: listviewData.length,
@@ -176,7 +232,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           );
                         },
                       ),
-
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15.0),
@@ -184,22 +239,27 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Divider(),
+                              const Divider(),
                               TextButton.icon(
-                                onPressed: () {},
+                                // <<<<<<< ritesh
+                                //                                 onPressed: () {},
+                                //                                 label: const Text(
+                                // =======
+                                onPressed: () => shareApp(),
                                 label: Text(
+                                  // >>>>>>> main
                                   "Share",
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                icon: Icon(Icons.share),
+                                icon: const Icon(Icons.share),
                               ),
                               TextButton.icon(
                                 onPressed: () {},
-                                label: Text(
-                                  "Sing Out",
+                                label: const Text(
+                                  "Sign Out",
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                icon: Icon(Icons.logout),
+                                icon: const Icon(Icons.logout),
                               ),
                             ],
                           ),
@@ -231,11 +291,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   void _visiPage(int index) {
     switch (index) {
       case 0:
-        {
-          Navigator.pop(context);
-        }
+        Navigator.pop(context);
         break;
       case 1:
+        // <<<<<<< ritesh
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(builder: (context) => BookmaidScreen()),
+        //         );
+        // =======
         {
           Navigator.push(
             context,
@@ -244,34 +308,63 @@ class _NavigationScreenState extends State<NavigationScreen> {
         }
         break;
       case 2:
-        {}
-        break;
-      case 3:
-        {}
-        break;
-      case 4:
-        {}
-        break;
-      case 5:
         {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ReviewPage()),
+            MaterialPageRoute(builder: (context) => WhatWeOffer()),
           );
         }
         break;
-      case 6:
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HowWorksPage()),
+          );
+        }
+        break;
+      case 4: //about us
         {}
+
+        break;
+      case 5:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ReviewPage()),
+        );
+        break;
+      case 6: //contact us
+        {
+          // {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => TermConditionPage()),
+          //   );
+          // }
+        }
         break;
       case 7:
-        {}
+        {
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TermConditionPage()),
+            );
+          }
+        }
         break;
       case 8:
-        {}
+        {
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+            );
+          }
+        }
         break;
 
       default:
-        {}
         break;
     }
   }

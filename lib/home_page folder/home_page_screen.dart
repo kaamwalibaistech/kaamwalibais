@@ -1,14 +1,18 @@
 import 'dart:developer';
 
-import 'package:carousel_slider/carousel_options.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:kaamwaalibais/models/home_model.dart';
-import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/providers/homepage_provider.dart';
+import 'package:kaamwaalibais/utils/reviews.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import 'services_details_page.dart';
+import 'shimmers/homepage_shimmer.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,18 +23,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late YoutubePlayerController _controller;
+  late HomepageProvider homePro;
   HomeModel? homeModel;
   @override
   void initState() {
     super.initState();
-    getReady();
-  }
-
-  getReady() async {
-    final apicall = await homePageApi();
-    setState(() {
-      homeModel = apicall;
-    });
     final videoId = YoutubePlayer.convertUrlToId(
       homeModel?.getVideoUrl ??
           "https://youtu.be/olDOicf6xIM?si=M3oh9W-j-hKgI6sF",
@@ -39,7 +36,20 @@ class _MyHomePageState extends State<MyHomePage> {
       initialVideoId: videoId ?? "",
       flags: YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
     );
-    log(videoId.toString());
+
+    getReady();
+  }
+
+  getReady() async {
+    homePro = Provider.of<HomepageProvider>(context, listen: false);
+    // final apicall = await homePageApi();
+    // setState(() {
+    //   homeModel = apicall;
+    // });
+    final apicall = await homePro.getHomeData();
+    setState(() {
+      homeModel = apicall;
+    });
   }
 
   List<Map> logo = [
@@ -50,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   List<Map<String, String>> services = [
-    {"image": "lib/assets/maid.jpg", "name": "Maid"},
+    {"image": "lib/assets/maid.jpg", "name": "Maids"},
     {"image": "lib/assets/babysitter.jpeg", "name": "Babysitter"},
     {"image": "lib/assets/cook.jpeg", "name": "Cook"},
     {"image": "lib/assets/eldercare.jpeg", "name": "Elder Care"},
@@ -60,37 +70,52 @@ class _MyHomePageState extends State<MyHomePage> {
     {"image": "lib/assets/driver.jpeg", "name": "Driver"},
   ];
 
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayerBuilder(
-      player: YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-      ),
-      builder: (context, player) {
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: Image.asset("lib/assets/whatsapp.png", height: 40),
+    return homePro.isloading == true
+        ? shimmerHomeScreen()
+        : YoutubePlayerBuilder(
+          player: YoutubePlayer(
+            controller: _controller,
+            showVideoProgressIndicator: true,
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  _headerSection(),
-                  _servicesSection(),
-                  _howItWorksSection(),
-                  _reviewsSection(),
-                  _videoSection(player),
-                  _socialSection(),
-                ],
+
+          builder: (context, player) {
+            return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                // onPressed: () => _launchUrl("https://drive.google.com"),
+                onPressed: () => _launchUrl("https://wa.me/+919819221144"),
+                child: Image.asset("lib/assets/whatsapp.png", height: 40),
               ),
-            ),
-          ),
+              body: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _headerSection(),
+                      _servicesSection(),
+                      _howItWorksSection(),
+                      _reviewsSection(),
+                      _videoSection(player),
+                      _socialSection(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
-      },
-    );
   }
 
   Widget _headerSection() => CarouselSlider.builder(
@@ -98,9 +123,15 @@ class _MyHomePageState extends State<MyHomePage> {
     itemBuilder: (context, index, realIndex) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
-        child: Image.network(
-          homeModel!.getSliderList?[index].photo ?? "",
+        child: CachedNetworkImage(
+          imageUrl: homeModel!.getSliderList?[index].photo ?? "",
           fit: BoxFit.fill,
+          placeholder:
+              (context, url) => Container(
+                height: MediaQuery.of(context).size.height * 0.25,
+                width: double.maxFinite,
+                color: Colors.deepPurpleAccent.shade100,
+              ),
         ),
       );
     },
@@ -112,39 +143,10 @@ class _MyHomePageState extends State<MyHomePage> {
       autoPlayCurve: Curves.easeInOut,
       autoPlayAnimationDuration: const Duration(milliseconds: 800),
       enableInfiniteScroll: true,
-      // padEnds: true,
     ),
   );
 
-  // <<<<<<< ritesh
-  //                   decoration: BoxDecoration(
-  //                     color: const Color.fromARGB(255, 224, 221, 221),
-  //                   ),
-  //                   child: Center(child: Text("Image Data")),
-  //                 ),
-  //                 GestureDetector(
-  //                   onTap: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(builder: (context) => LoginScreen()),
-  //                     );
-  //                   },
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.symmetric(vertical: 15.0),
-  //                     child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
-  //                   ),
-  //                 ),
-  //                 GridView.builder(
-  //                   shrinkWrap: true,
-  //                   physics: NeverScrollableScrollPhysics(),
-  //                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //                     mainAxisSpacing: 15,
-  //                     crossAxisSpacing: 10,
-  //                     crossAxisCount: 2,
-  //                     childAspectRatio: 0.75,
-  // =======
   Widget _servicesSection() => Column(
-    // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -161,30 +163,42 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         itemCount: services.length,
         itemBuilder:
-            (context, index) => Card(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(10),
-                    ),
-                    child: Image.asset(
-                      services[index]["image"]!,
-                      width: 180,
-                      height: 200,
-                      fit: BoxFit.fitHeight,
-                    ),
-                    // >>>>>>> main
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      services[index]["name"]!,
-                      style: const TextStyle(fontSize: 16),
+            (context, index) => GestureDetector(
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ServicesDetailsPage(
+                            serviceName: services[index]["name"] ?? "maids",
+                            // image: services[index]["image"] ?? "",
+                          ),
                     ),
                   ),
-                ],
+              child: Card(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(10),
+                      ),
+                      child: Image.asset(
+                        services[index]["image"]!,
+                        width: 180,
+                        height: 200,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        services[index]["name"]!,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
       ),
@@ -192,7 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
   );
 
   Widget _howItWorksSection() => Column(
-    // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -202,8 +215,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
   );
   Widget _reviewsSection() => Container(
-    width: double.infinity,
-    padding: EdgeInsets.only(top: 25, right: 10, left: 10),
+    // width: double.infinity,
+    padding: EdgeInsets.only(top: 23, right: 10, left: 10),
     decoration: BoxDecoration(
       color: Colors.amber.shade200,
       borderRadius: BorderRadius.only(
@@ -220,9 +233,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 homeModel?.getTestimonialList?[index].name ?? "NA",
                 style: TextStyle(fontSize: 20),
               ),
-              SizedBox(height: 10),
+              // SizedBox(height: 10),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.34,
+                width: MediaQuery.of(context).size.width * 0.36,
 
                 child: EasyStarsRating(
                   readOnly: true,
@@ -236,7 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
 
-              SizedBox(height: 15),
+              SizedBox(height: 12),
               Text(
                 homeModel?.getTestimonialList?[index].description ?? "NA",
                 textAlign: TextAlign.justify,
@@ -251,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
       options: CarouselOptions(
-        height: MediaQuery.of(context).size.height * 0.22,
+        // height: MediaQuery.of(context).size.height * 0.22,
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 1,
