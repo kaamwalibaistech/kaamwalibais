@@ -4,10 +4,10 @@ class HowItWorksModel {
 
   HowItWorksModel({this.id, this.description});
 
-  factory HowItWorksModel.fromJson(List<dynamic> json) {
+  factory HowItWorksModel.fromJson(Map<String, dynamic> json) {
     return HowItWorksModel(
-      id: json[0]['id']?.toString(),
-      description: json[0]['description'] as String?,
+      id: json['id']?.toString(),
+      description: json['description'] as String?,
     );
   }
 
