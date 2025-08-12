@@ -33,7 +33,7 @@ class _TermConditionPageState extends State<TermConditionPage> {
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios_new_rounded),
         ),
-        title: Text("Privacy Policy"),
+        title: Text("Term & conditions"),
         titleTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,
