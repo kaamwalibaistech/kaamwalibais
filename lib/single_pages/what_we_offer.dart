@@ -38,7 +38,7 @@ class _WhatWeOfferState extends State<WhatWeOffer> {
         width: 180,
         height: 200,
         decoration: BoxDecoration(
-          color: Colors.blueGrey,
+          color: Colors.deepPurpleAccent.shade100.withAlpha(50),
           borderRadius: BorderRadius.circular(10),
         ),
       ),

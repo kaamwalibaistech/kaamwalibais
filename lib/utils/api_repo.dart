@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:kaamwaalibais/models/home_model.dart';
+import 'package:kaamwaalibais/models/how_works.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
 
@@ -47,6 +48,56 @@ Future<WhatweareModel?> whatWeOffer() async {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return WhatweareModel.fromJson(data);
+    }
+  } catch (e) {
+    log(e.toString());
+  }
+
+  return null;
+}
+
+Future<String?> privacyPolicyApi() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.privacy);
+
+    final response = await http.get(url, headers: {});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      log(data[0]["description"]);
+      return data[0]["description"];
+    }
+  } catch (e) {
+    log(e.toString());
+  }
+
+  return null;
+}
+
+Future<String?> termConditionPageApi() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.term);
+
+    final response = await http.get(url, headers: {});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      log(data[0]["description"]);
+      return data[0]["description"];
+    }
+  } catch (e) {
+    log(e.toString());
+  }
+
+  return null;
+}
+
+Future<HowItWorksModel?> howWorksApi() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.howWorks);
+
+    final response = await http.get(url, headers: {});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return HowItWorksModel.fromJson(data);
     }
   } catch (e) {
     log(e.toString());

@@ -5,7 +5,10 @@ import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
+import 'package:kaamwaalibais/single_pages/how_works_page.dart';
+import 'package:kaamwaalibais/single_pages/privacy_policy.dart';
 import 'package:kaamwaalibais/single_pages/review_page.dart';
+import 'package:kaamwaalibais/single_pages/term_condtion.dart';
 import 'package:kaamwaalibais/single_pages/what_we_offer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -281,7 +284,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
         }
         break;
       case 3:
-        {}
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HowWorksPage()),
+          );
+        }
         break;
       case 4:
         {}
@@ -298,10 +306,24 @@ class _NavigationScreenState extends State<NavigationScreen> {
         {}
         break;
       case 7:
-        {}
+        {
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TermConditionPage()),
+            );
+          }
+        }
         break;
       case 8:
-        {}
+        {
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+            );
+          }
+        }
         break;
 
       default:
