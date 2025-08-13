@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:kaamwaalibais/models/home_model.dart';
-import 'package:kaamwaalibais/models/how_works.dart';
+import 'package:kaamwaalibais/models/how_works_model.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
@@ -88,7 +88,7 @@ Future<String?> privacyPolicyApi() async {
     final response = await http.get(url, headers: {});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      log(data[0]["description"]);
+      // log(data[0]["description"]);
       return data[0]["description"];
     }
   } catch (e) {
@@ -105,7 +105,7 @@ Future<String?> termConditionPageApi() async {
     final response = await http.get(url, headers: {});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      log(data[0]["description"]);
+      // log(data[0]["description"]);
       return data[0]["description"];
     }
   } catch (e) {
@@ -115,14 +115,16 @@ Future<String?> termConditionPageApi() async {
   return null;
 }
 
-Future<HowItWorksModel?> howWorksApi() async {
+Future<List<HowItWorksModel>?> howWorksApi() async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.howWorks);
 
     final response = await http.get(url, headers: {});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return HowItWorksModel.fromJson(data);
+      List<HowItWorksModel> howItWorksList =
+          (data).map((item) => HowItWorksModel.fromJson(item)).toList();
+      return howItWorksList;
     }
   } catch (e) {
     log(e.toString());
