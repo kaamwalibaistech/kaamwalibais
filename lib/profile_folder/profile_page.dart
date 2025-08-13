@@ -90,10 +90,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               GestureDetector(
                 onTap: () async {
-                  // Clear local storage
                   await LocalStoragePref.instance!.clearAllPref();
 
-                  // Navigate to login screen and remove all previous routes
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
