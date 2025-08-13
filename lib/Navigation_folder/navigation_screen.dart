@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 import 'package:kaamwaalibais/single_pages/how_works_page.dart';
@@ -232,39 +233,92 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           );
                         },
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Divider(),
-                              TextButton.icon(
-                                // <<<<<<< ritesh
-                                //                                 onPressed: () {},
-                                //                                 label: const Text(
-                                // =======
-                                onPressed: () => shareApp(),
-                                label: Text(
-                                  // >>>>>>> main
-                                  "Share",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                icon: const Icon(Icons.share),
+
+                      isLoggedin ?? false
+                          ? Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Divider(),
+                                  TextButton.icon(
+                                    // <<<<<<< ritesh
+                                    //                                 onPressed: () {},
+                                    //                                 label: const Text(
+                                    // =======
+                                    onPressed: () => shareApp(),
+                                    label: Text(
+                                      // >>>>>>> main
+                                      "Share",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.share),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      await LocalStoragePref.instance!
+                                          .clearAllPref();
+
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginScreen(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    },
+                                    label: const Text(
+                                      "Sign Out",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.logout),
+                                  ),
+                                ],
                               ),
-                              TextButton.icon(
-                                onPressed: () {},
-                                label: const Text(
-                                  "Sign Out",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                icon: const Icon(Icons.logout),
+                            ),
+                          )
+                          : Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Divider(),
+                                  TextButton.icon(
+                                    // <<<<<<< ritesh
+                                    //                                 onPressed: () {},
+                                    //                                 label: const Text(
+                                    // =======
+                                    onPressed: () => shareApp(),
+                                    label: Text(
+                                      // >>>>>>> main
+                                      "Share",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.share),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginScreen(),
+                                        ),
+                                      );
+                                    },
+                                    label: const Text(
+                                      "Log In",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.logout),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
                       SizedBox(
                         height: MediaQuery.of(context).viewPadding.bottom,
                       ),
@@ -334,34 +388,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
         );
         break;
       case 6:
-        {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TermConditionPage()),
-            );
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TermConditionPage()),
+        );
+
         break;
       case 7:
-        {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TermConditionPage()),
-            );
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TermConditionPage()),
+        );
+
         break;
       case 8:
-        {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PrivacyPolicy()),
-            );
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+        );
+
         break;
 
       default:
