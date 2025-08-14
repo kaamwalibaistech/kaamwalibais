@@ -6,11 +6,11 @@ import 'package:easy_stars/easy_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/providers/homepage_provider.dart';
-import 'package:kaamwaalibais/utils/reviews.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../single_pages/review_widget.dart';
 import 'services_details_page.dart';
 import 'shimmers/homepage_shimmer.dart';
 
@@ -42,10 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   getReady() async {
     homePro = Provider.of<HomepageProvider>(context, listen: false);
-    // final apicall = await homePageApi();
-    // setState(() {
-    //   homeModel = apicall;
-    // });
     final apicall = await homePro.getHomeData();
     setState(() {
       homeModel = apicall;
@@ -94,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, player) {
             return Scaffold(
               floatingActionButton: FloatingActionButton(
-                // onPressed: () => _launchUrl("https://drive.google.com"),
                 onPressed: () => _launchUrl("https://wa.me/+919819221144"),
                 child: Image.asset("lib/assets/whatsapp.png", height: 40),
               ),
@@ -106,7 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       _headerSection(),
                       _servicesSection(),
                       _howItWorksSection(),
-                      _reviewsSection(),
+                      // _reviewsSection(),
+                      reviewsSection(isHomePage: true),
                       _videoSection(player),
                       _socialSection(),
                     ],
@@ -171,7 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder:
                           (context) => ServicesDetailsPage(
                             serviceName: services[index]["name"] ?? "maids",
-                            // image: services[index]["image"] ?? "",
                           ),
                     ),
                   ),
@@ -214,8 +209,9 @@ class _MyHomePageState extends State<MyHomePage> {
       Image.asset("lib/assets/kwbmaid.jpeg", fit: BoxFit.cover),
     ],
   );
+
+  /*
   Widget _reviewsSection() => Container(
-    // width: double.infinity,
     padding: EdgeInsets.only(top: 23, right: 10, left: 10),
     decoration: BoxDecoration(
       color: Colors.amber.shade200,
@@ -233,7 +229,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 homeModel?.getTestimonialList?[index].name ?? "NA",
                 style: TextStyle(fontSize: 20),
               ),
-              // SizedBox(height: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.36,
 
@@ -275,6 +270,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),
   );
+
+  */
 
   Widget _videoSection(Widget player) => Column(
     // crossAxisAlignment: CrossAxisAlignment.start,

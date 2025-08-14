@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maid_details_screen.dart';
 
+import '../utils/snackbar.dart';
+
 class OurMaidsScreen extends StatelessWidget {
   const OurMaidsScreen({super.key});
 
@@ -113,7 +115,11 @@ class OurMaidsScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed:
+                                  () => successToast(
+                                    context,
+                                    "Your request has been sent to us, an executive will be contact you soon!",
+                                  ),
                               child: Text(
                                 'HIRE ME',
                                 style: TextStyle(color: Colors.white),

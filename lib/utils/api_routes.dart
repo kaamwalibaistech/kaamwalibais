@@ -10,5 +10,5 @@ class ApiRoutes {
   static const String privacy = "cms-pages?type_=privacy";
   static const String term = "cms-pages?type_=term";
   static const String howWorks = "cms-pages?type_=how_it_works";
-
+  static const String aboutus = "cms-pages?type_=about";
 }
