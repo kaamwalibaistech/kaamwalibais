@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:kaamwaalibais/models/aboutus_model.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/models/how_works_model.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
@@ -130,5 +131,21 @@ Future<List<HowItWorksModel>?> howWorksApi() async {
     log(e.toString());
   }
 
+  return null;
+}
+
+Future<AboutUsModel?> fetchAboutUs() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.aboutus);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return AboutUsModel.fromJson(jsonData);
+    } else {
+      print("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
   return null;
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/snackbar.dart';
+
 class OurMaidDetailsScreen extends StatelessWidget {
   const OurMaidDetailsScreen({super.key});
 
@@ -126,7 +128,11 @@ class OurMaidDetailsScreen extends StatelessWidget {
                 height: 50,
                 margin: const EdgeInsets.all(16),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed:
+                      () => successToast(
+                        context,
+                        "Your request has been sent to us, an executive will be contact you soon!",
+                      ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                   ),

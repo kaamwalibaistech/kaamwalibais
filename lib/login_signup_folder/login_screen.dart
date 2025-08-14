@@ -99,7 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
                             } else {
-                              failledToast(context);
+                              failledToast(
+                                context,
+                                "Mobile Number is Not Register",
+                              );
                             }
                           }
                         },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../utils/api_repo.dart';
+import 'review_widget.dart';
 
 class TermConditionPage extends StatefulWidget {
   const TermConditionPage({super.key});
@@ -43,21 +44,28 @@ class _TermConditionPageState extends State<TermConditionPage> {
       body:
           data == null
               ? Center(child: CircularProgressIndicator())
-              : Container(
-                padding: EdgeInsets.all(15),
-                margin: EdgeInsets.only(
-                  top: 12,
-                  right: 12,
-                  left: 12,
-                  bottom: MediaQuery.of(context).viewPadding.bottom,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                  border: Border.all(color: Colors.amber, width: 8),
-                ),
-                child: SingleChildScrollView(
-                  child: Html(data: data ?? "Error while loading api data."),
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(15),
+                      margin: EdgeInsets.only(
+                        top: 12,
+                        right: 12,
+                        left: 12,
+                        bottom: MediaQuery.of(context).viewPadding.bottom,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                        border: Border.all(color: Colors.amber, width: 8),
+                      ),
+                      child: Html(
+                        data: data ?? "Error while loading api data.",
+                      ),
+                    ),
+                    reviewsSection(),
+                  ],
                 ),
               ),
     );
