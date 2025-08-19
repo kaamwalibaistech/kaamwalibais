@@ -68,26 +68,22 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     style: TextStyle(color: Colors.white, height: 1.4),
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      const Text(
-                        'Call Us - +91 8767078888',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                  InkWell(
+                    onTap: () => launchUrl(Uri.parse('tel:+918767078888')),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Call Us - +91 8767078888',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      InkWell(
-                        onTap: () => launchUrl(Uri.parse('tel:+918767078888')),
-                        child: const Icon(
-                          Icons.call,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        const Icon(Icons.call, color: Colors.white, size: 18),
+                      ],
+                    ),
                   ),
                 ],
               ),
