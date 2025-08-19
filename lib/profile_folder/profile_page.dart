@@ -50,7 +50,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: ListTile(
-                  // textColor: Colors.white,
                   titleTextStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
