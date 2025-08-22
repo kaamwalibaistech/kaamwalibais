@@ -78,7 +78,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       navigationList = [
         MyHomePage(),
         BookmaidScreen(),
-        OurMaidsScreen(),
+        isLoggedin! ? OurMaidsScreen() : LoginLandingScreen(),
         isLoggedin! ? ProfileScreen() : LoginLandingScreen(),
       ];
       isLoading = false;
