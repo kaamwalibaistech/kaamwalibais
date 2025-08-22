@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/providers/reviewpage_provider.dart';
 import 'package:kaamwaalibais/utils/font.dart';
@@ -22,6 +23,16 @@ void main() async {
       child: const MyApp(),
     ),
   );
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.light
+    ..maskType = EasyLoadingMaskType.black
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -42,6 +53,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const NavigationScreen(),
+      builder: EasyLoading.init(),
     );
   }
 }

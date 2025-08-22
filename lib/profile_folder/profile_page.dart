@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
+import 'package:kaamwaalibais/models/user_login_model.dart';
+import 'package:kaamwaalibais/profile_folder/manage_profile_page.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -11,6 +13,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  GetUserlogIn? userdata;
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  getUserData() async {
+    userdata = LocalStoragePref.instance!.getLoginModel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -60,30 +73,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: Colors.white,
                     fontSize: 15,
                   ),
-                  title: Text("Test User"),
-                  subtitle: Text("abc@gmail.com"),
+                  title: Text(userdata?.user?.name ?? "NA"),
+                  subtitle: Text(userdata?.user?.emailid ?? "NA"),
                 ),
               ),
-              SizedBox(
-                height: 100,
-                child: Card(
-                  margin: EdgeInsets.all(10),
-                  elevation: 1,
-                  shadowColor: Theme.of(context).colorScheme.primaryContainer,
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.manage_accounts_outlined),
-                      SizedBox(width: 12),
-                      Text(
-                        "Manage Your Profile",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => UpdateProfileScreen(userdata: userdata),
+                    ),
+                  );
+                },
+                child: SizedBox(
+                  height: 100,
+                  child: Card(
+                    margin: EdgeInsets.all(10),
+                    elevation: 1,
+                    shadowColor: Theme.of(context).colorScheme.primaryContainer,
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.manage_accounts_outlined),
+                        SizedBox(width: 12),
+                        Text(
+                          "Manage Your Profile",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -166,10 +166,18 @@ Future<AboutUsModel?> maidLists() async {
   return null;
 }
 
-Future<AboutUsModel?> bookMaidForm() async {
+Future<AboutUsModel?> bookMaidForm(
+  String selectedMaidFor,
+  String locationValue,
+  String requirement,
+  String selectedGender,
+) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.bookmaid);
-    final response = await http.get(url);
+    final response = await http.post(
+      url,
+      // body: {'login_mobile_no': phoneNumber},
+    );
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       return AboutUsModel.fromJson(jsonData);
