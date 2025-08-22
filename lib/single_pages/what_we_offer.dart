@@ -6,6 +6,7 @@ import 'package:kaamwaalibais/models/whatweare_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../utils/api_repo.dart';
+import 'review_widget.dart';
 import 'services_item.dart';
 
 class WhatWeOffer extends StatefulWidget {
@@ -63,61 +64,65 @@ class _WhatWeOfferState extends State<WhatWeOffer> {
       body:
           whatweareModel == null
               ? Center(child: CircularProgressIndicator())
-              : Padding(
+              : ListView(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewPadding.bottom,
+                  bottom: MediaQuery.of(context).viewPadding.bottom * 0.9,
                 ),
-                child: Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.amber, width: 8),
-                  ),
-                  child: ListView.builder(
-                    itemCount: getServiceList(whatweareModel!).length,
-                    itemBuilder: (context, index) {
-                      final service = getServiceList(whatweareModel!)[index];
-                      log(service.image.toString());
-                      return Column(
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: service.image.trim(),
-                            width: 180,
-                            height: 200,
-                            fit: BoxFit.fitHeight,
-                            placeholder: (context, url) => shimmer(),
-                            errorWidget:
-                                (context, url, error) => Icon(Icons.error),
-                          ),
-
-                          SizedBox(height: 30),
-                          RichText(
-                            text: TextSpan(
-                              text: service.title,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w400,
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.amber, width: 8),
+                    ),
+                    child: Column(
+                      children: List.generate(
+                        getServiceList(whatweareModel!).length,
+                        (index) {
+                          final service =
+                              getServiceList(whatweareModel!)[index];
+                          return Column(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: service.image.trim(),
+                                width: 180,
+                                height: 200,
+                                fit: BoxFit.fitHeight,
+                                placeholder: (context, url) => shimmer(),
+                                errorWidget:
+                                    (context, url, error) => Icon(Icons.error),
                               ),
-                              children: [
-                                TextSpan(
-                                  text: "\n\n${service.content}",
+                              SizedBox(height: 30),
+                              RichText(
+                                text: TextSpan(
+                                  text: service.title,
                                   style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w400,
                                   ),
+                                  children: [
+                                    TextSpan(
+                                      text: "\n\n${service.content}",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Divider(height: 30),
-                        ],
-                      );
-                    },
+                              ),
+                              Divider(height: 30),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  reviewsSection(),
+                ],
               ),
     );
   }

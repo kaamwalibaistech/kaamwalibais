@@ -1,8 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:easy_stars/easy_stars.dart';
+
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/providers/homepage_provider.dart';
@@ -49,10 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Map> logo = [
-    {"logo": "lib/assets/twitter.png", "url": ""},
-    {"logo": "lib/assets/facebook.png", "url": ""},
-    {"logo": "lib/assets/linkedin.png", "url": ""},
-    {"logo": "lib/assets/youtube.png", "url": ""},
+    {"logo": "lib/assets/twitter.png", "url": "https://x.com/kaamwalibais"},
+    {
+      "logo": "lib/assets/facebook.png",
+      "url": "https://www.facebook.com/kaamwalibais1/",
+    },
+    {
+      "logo": "lib/assets/linkedin.png",
+      "url": "https://www.linkedin.com/in/kaamwalibai-s-ab70377a/",
+    },
+    {
+      "logo": "lib/assets/youtube.png",
+      "url": "https://www.youtube.com/@kaamwaliacademy11",
+    },
   ];
 
   List<Map<String, String>> services = [
@@ -101,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _headerSection(),
                       _servicesSection(),
                       _howItWorksSection(),
-                      // _reviewsSection(),
                       reviewsSection(isHomePage: true),
                       _videoSection(player),
+                      SizedBox(height: 10),
                       _socialSection(),
                     ],
                   ),
@@ -114,31 +122,19 @@ class _MyHomePageState extends State<MyHomePage> {
         );
   }
 
-  Widget _headerSection() => CarouselSlider.builder(
-    itemCount: homeModel?.getSliderList?.length ?? 0,
-    itemBuilder: (context, index, realIndex) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: CachedNetworkImage(
-          imageUrl: homeModel!.getSliderList?[index].photo ?? "",
-          fit: BoxFit.fill,
-          placeholder:
-              (context, url) => Container(
-                height: MediaQuery.of(context).size.height * 0.25,
-                width: double.maxFinite,
-                color: Colors.deepPurpleAccent.shade100,
-              ),
-        ),
-      );
-    },
-    options: CarouselOptions(
-      height: MediaQuery.of(context).size.height * 0.25,
-      autoPlay: true,
-      enlargeCenterPage: true,
-      viewportFraction: 1,
-      autoPlayCurve: Curves.easeInOut,
-      autoPlayAnimationDuration: const Duration(milliseconds: 800),
-      enableInfiniteScroll: true,
+  Widget _headerSection() => ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: CachedNetworkImage(
+      imageUrl:
+          homeModel?.getSliderList?[0].photo ??
+          "https://kamwalibais.com/admin/images/slider/slider-11526456763.jpg",
+      fit: BoxFit.fill,
+      placeholder:
+          (context, url) => Container(
+            height: MediaQuery.of(context).size.height * 0.25,
+            width: double.maxFinite,
+            color: Colors.deepPurpleAccent.shade100.withAlpha(50),
+          ),
     ),
   );
 
@@ -179,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         top: Radius.circular(10),
                       ),
                       child: Image.asset(
-                        services[index]["image"]!,
+                        services[index]["image"] ?? "",
                         width: 180,
                         height: 200,
                         fit: BoxFit.fitHeight,
@@ -188,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Text(
-                        services[index]["name"]!,
+                        services[index]["name"] ?? "",
                         style: const TextStyle(fontSize: 16),
                       ),
                     ),
@@ -210,69 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
   );
 
-  /*
-  Widget _reviewsSection() => Container(
-    padding: EdgeInsets.only(top: 23, right: 10, left: 10),
-    decoration: BoxDecoration(
-      color: Colors.amber.shade200,
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(8),
-        bottomRight: Radius.circular(8),
-      ),
-    ),
-    child: CarouselSlider.builder(
-      itemCount: homeModel?.getTestimonialList?.length ?? 0,
-      itemBuilder:
-          (context, index, realIndex) => Column(
-            children: [
-              Text(
-                homeModel?.getTestimonialList?[index].name ?? "NA",
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.36,
-
-                child: EasyStarsRating(
-                  readOnly: true,
-                  arrangementRadius: 20,
-                  emptyColor: Colors.black87,
-                  filledColor: Colors.black87,
-                  allowHalfRating: true,
-                  initialRating: double.parse(
-                    homeModel?.getTestimonialList?[index].rating ?? "NA",
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 12),
-              Text(
-                homeModel?.getTestimonialList?[index].description ?? "NA",
-                textAlign: TextAlign.justify,
-                style: TextStyle(fontSize: 15),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text("read more", style: TextStyle(color: Colors.blue)),
-              ),
-            ],
-          ),
-      options: CarouselOptions(
-        // height: MediaQuery.of(context).size.height * 0.22,
-        autoPlay: true,
-        enlargeCenterPage: true,
-        viewportFraction: 1,
-        autoPlayCurve: Curves.easeInOut,
-        autoPlayAnimationDuration: const Duration(milliseconds: 800),
-        enableInfiniteScroll: true,
-        padEnds: true,
-      ),
-    ),
-  );
-
-  */
-
   Widget _videoSection(Widget player) => Column(
     // crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -290,9 +223,9 @@ class _MyHomePageState extends State<MyHomePage> {
     children:
         logo
             .map(
-              (l) => Padding(
-                padding: const EdgeInsets.only(right: 8, top: 10, bottom: 30),
-                child: Image.asset(l['logo'], height: 40),
+              (l) => IconButton(
+                onPressed: () => _launchUrl(l['url']),
+                icon: Image.asset(l['logo'], height: 42),
               ),
             )
             .toList(),
