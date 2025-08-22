@@ -15,8 +15,8 @@ class _ReviewPageState extends State<ReviewPage> {
   late ReviewpageProvider reviewPage;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     reviewPage = Provider.of<ReviewpageProvider>(context, listen: false);
     reviewPage.getReviewData();
   }

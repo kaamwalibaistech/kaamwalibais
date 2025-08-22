@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
 
 class BookmaidScreen extends StatefulWidget {
   const BookmaidScreen({super.key});
@@ -11,7 +13,7 @@ class BookmaidScreen extends StatefulWidget {
 class _BookmaidScreenState extends State<BookmaidScreen> {
   String? selectedGender;
   bool isLoading = false;
-
+  TextEditingController locationValue = TextEditingController();
   List<String> maidForOptions = [
     'House Maid',
     'Elder Care',
@@ -123,30 +125,20 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed:
-                      isLoading
-                          ? null
-                          : () {
-                            setState(() => isLoading = true);
-                            Future.delayed(Duration(seconds: 5), () {
-                              setState(() => isLoading = false);
-                              // Navigate or show success
-                            });
-                          },
-                  child:
-                      isLoading
-                          ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                          : Text(
-                            "Continue  >",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                  onPressed: () async {
+                    EasyLoading.show();
+                    final response = await bookMaidForm(
+                      selectedMaidFor.toString(),
+                      locationValue.toString(),
+                      selectedRequirement.toString(),
+                      selectedGender.toString(),
+                    );
+                  },
+
+                  child: Text(
+                    "Continue",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

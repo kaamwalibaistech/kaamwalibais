@@ -79,7 +79,7 @@ Widget reviewsSection({bool isHomePage = false}) =>
                           ),
                         ),
 
-                        SizedBox(height: 12),
+                        // SizedBox(height: 12),
                         Text(
                           reviews[index].description ?? "NA",
                           textAlign: TextAlign.justify,

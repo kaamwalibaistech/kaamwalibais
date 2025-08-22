@@ -11,7 +11,7 @@ import 'package:kaamwaalibais/utils/api_routes.dart';
 
 import '../models/whatweare_model.dart';
 
-Future<ReviewModel?> reviewsApi() async {
+Future<ReviewModel> reviewsApi() async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.testimonaList);
 
@@ -19,12 +19,12 @@ Future<ReviewModel?> reviewsApi() async {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return ReviewModel.fromJson(data);
+    } else {
+      throw Exception('Model mapping crashed');
     }
   } catch (e) {
-    log(e.toString());
+    throw Exception(e.toString());
   }
-
-  return null;
 }
 
 Future<HomeModel?> homePageApi() async {
@@ -166,10 +166,18 @@ Future<AboutUsModel?> maidLists() async {
   return null;
 }
 
-Future<AboutUsModel?> bookMaidForm() async {
+Future<AboutUsModel?> bookMaidForm(
+  String selectedMaidFor,
+  String locationValue,
+  String requirement,
+  String selectedGender,
+) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.bookmaid);
-    final response = await http.get(url);
+    final response = await http.post(
+      url,
+      // body: {'login_mobile_no': phoneNumber},
+    );
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       return AboutUsModel.fromJson(jsonData);
