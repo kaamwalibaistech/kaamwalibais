@@ -149,3 +149,35 @@ Future<AboutUsModel?> fetchAboutUs() async {
   }
   return null;
 }
+
+Future<AboutUsModel?> maidLists() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.maidlists);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return AboutUsModel.fromJson(jsonData);
+    } else {
+      log("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    log("Exception: $e");
+  }
+  return null;
+}
+
+Future<AboutUsModel?> bookMaidForm() async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.bookmaid);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return AboutUsModel.fromJson(jsonData);
+    } else {
+      print("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+  return null;
+}
