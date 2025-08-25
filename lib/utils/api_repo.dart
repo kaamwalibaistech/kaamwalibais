@@ -223,3 +223,35 @@ Future<AboutUsModel?> bookMaidForm() async {
   }
   return null;
 }
+
+Future<String?> contactUsApi(
+  String name,
+  String phone,
+  String email,
+  String query,
+) async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.contactus);
+    final body = {
+      'contact_name': name,
+      'contact_phone': phone,
+      'contact_emailid': email,
+      'contact_message': query,
+    };
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(body),
+    );
+    if (response.statusCode == 201) {
+      final jsonData = json.decode(response.body);
+      log(jsonData);
+      return jsonData['Message'];
+    } else {
+      log("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    log("Exception: $e");
+  }
+  return null;
+}

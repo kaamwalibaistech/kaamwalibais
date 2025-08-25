@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utils/api_repo.dart';
+
 class ContactUsPage extends StatefulWidget {
   const ContactUsPage({super.key});
 
@@ -170,12 +172,25 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   // TODO: submit to backend
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Submitted')),
+
+                                  final data = await contactUsApi(
+                                    _nameController.text,
+                                    _phoneController.text,
+                                    _emailController.text,
+                                    _queryController.text,
                                   );
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Your request is summited please wait, out team will contact you soon!',
+                                      ),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
                                 }
                               },
                               child: const Row(
