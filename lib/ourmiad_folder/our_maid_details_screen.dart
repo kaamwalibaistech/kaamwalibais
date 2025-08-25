@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:kaamwaalibais/models/maidlist_model.dart';
 
 import '../single_pages/contactus_page.dart';
-import '../utils/snackbar.dart';
 
 class OurMaidDetailsScreen extends StatelessWidget {
-  const OurMaidDetailsScreen({super.key});
+  final MaidData? data;
+  const OurMaidDetailsScreen({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +27,10 @@ class OurMaidDetailsScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage(
-                'lib/assets/cook.jpeg',
+              backgroundImage: CachedNetworkImageProvider(
+                data?.photo ?? "",
               ), // Replace with your asset
             ),
             const SizedBox(height: 16),
@@ -40,10 +42,10 @@ class OurMaidDetailsScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Center(
                         child: Text(
-                          "Ashadevi Yadav",
+                          data?.name ?? "",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -52,16 +54,16 @@ class OurMaidDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 12),
-                      Text(
-                        "Address: Near Shankar mandir, Room no. 17, Pathan Wadi, Aarey Road Al. Aman Chawl, Powai, Nitie S.O, Mumbai",
-                      ),
+                      Text("Address: ${data?.address ?? ""}"),
                       SizedBox(height: 6),
-                      Text("Age: 52"),
-                      Text("Status: Married"),
-                      Text("Religion: Hindu"),
-                      Text("Experience: 20 yrs"),
+                      Text("Age:  ${data?.age ?? ""}"),
+                      Text("Status:  ${data?.maritalStatus ?? ""}"),
+                      Text("Religion:  ${data?.religionName ?? ""}"),
+                      Text("Experience:  ${data?.workExperience ?? ""} yrs"),
                       Text("Speaks: Hindi"),
-                      Text("Documents: adhar_card  pan_card"),
+                      Text(
+                        "Documents:  ${data?.adharCard ?? "NA"}   ${data?.panCard ?? "NA"}",
+                      ),
                     ],
                   ),
                 ),
