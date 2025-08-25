@@ -4,6 +4,7 @@ class ApiRoutes {
   static const String testimonaList = "testimonia-list";
 
   static const String login = "user_login";
+  static const String otpVarify = "otpcheck";
 
   static const String whatWeOffer = "cms-pages?type_=what_we_offer";
 

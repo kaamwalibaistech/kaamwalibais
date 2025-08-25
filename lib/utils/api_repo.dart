@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kaamwaalibais/models/aboutus_model.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/models/how_works_model.dart';
+import 'package:kaamwaalibais/models/maidlist_model.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 
 import '../models/whatweare_model.dart';
 
@@ -57,6 +60,36 @@ Future<GetUserlogIn?> getUserLogIn(phoneNumber) async {
       return GetUserlogIn.fromJson(data);
     } else if (response.statusCode == 500) {
       return null;
+    }
+  } catch (e) {
+    log(e.toString());
+  }
+  return null;
+}
+
+Future<int?> otpVarifyApi(
+  String otp,
+  String memberId,
+  BuildContext context,
+) async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.otpVarify);
+
+    final response = await http.post(
+      url,
+      body: {'otp': otp, 'member_id': memberId},
+    );
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else if (response.statusCode == 201) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      LocalStoragePref().setLoginTocken(data['token']);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(data['message'])));
+      String aa = LocalStoragePref().gsetLoginTocken() ?? "null";
+      log(aa);
+      return response.statusCode;
     }
   } catch (e) {
     log(e.toString());
@@ -150,13 +183,22 @@ Future<AboutUsModel?> fetchAboutUs() async {
   return null;
 }
 
-Future<AboutUsModel?> maidLists() async {
+Future<MaidlistModel?> maidLists(String token) async {
   try {
-    final url = Uri.parse(ApiRoutes.url + ApiRoutes.maidlists);
+    final url = Uri.parse(
+      "https://kamwalibais.com/api/maid-details-all?page=2",
+    );
+    // final url = Uri.parse(ApiRoutes.url + ApiRoutes.maidlists);
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      return AboutUsModel.fromJson(jsonData);
+
+      return MaidlistModel.fromJson(jsonData);
+    } else if (response.statusCode == 201) {
+      log("Error: ${response.statusCode}");
+      final jsonData = json.decode(response.body);
+
+      return MaidlistModel.fromJson(jsonData);
     } else {
       log("Error: ${response.statusCode}");
     }

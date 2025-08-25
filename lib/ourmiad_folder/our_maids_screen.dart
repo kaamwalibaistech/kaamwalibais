@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/models/maidlist_model.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maid_details_screen.dart';
+import 'package:kaamwaalibais/single_pages/contactus_page.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 
 import '../utils/snackbar.dart';
 
-class OurMaidsScreen extends StatelessWidget {
+class OurMaidsScreen extends StatefulWidget {
   const OurMaidsScreen({super.key});
+
+  @override
+  State<OurMaidsScreen> createState() => _OurMaidsScreenState();
+}
+
+class _OurMaidsScreenState extends State<OurMaidsScreen> {
+  MaidlistModel? maidlistModel;
+  @override
+  void initState() {
+    super.initState();
+    gatMaidList();
+  }
+
+  gatMaidList() async {
+    String token = LocalStoragePref().gsetLoginTocken() ?? "";
+    final data = await maidLists(token);
+    setState(() {
+      maidlistModel = data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +62,9 @@ class OurMaidsScreen extends StatelessWidget {
         ),
         body: ListView.builder(
           padding: EdgeInsets.all(12),
-          itemCount: 100,
+          itemCount: maidlistModel?.data?.length ?? 0,
           itemBuilder: (context, index) {
+            final maid = maidlistModel?.data?[index];
             return GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -56,8 +81,8 @@ class OurMaidsScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        "lib/assets/test.jpg",
+                      child: Image.network(
+                        maid?.photo ?? "",
                         width: 150,
                         // height: 100,
                         fit: BoxFit.cover,
@@ -69,7 +94,7 @@ class OurMaidsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Ashadevi Yadav",
+                            maid?.name ?? "",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -77,12 +102,12 @@ class OurMaidsScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Powai Mumbai, Mumbai",
+                            maid?.address ?? "",
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "52 | Female",
+                            "${maid?.age ?? ""} | ${maid?.gender ?? ""}",
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                           SizedBox(height: 6),
@@ -91,7 +116,7 @@ class OurMaidsScreen extends StatelessWidget {
                             runSpacing: -8,
                             children: [
                               Chip(
-                                label: Text("Housemaid"),
+                                label: Text(maid?.workExperience ?? ""),
                                 backgroundColor: Colors.deepPurple[50],
                                 labelStyle: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
@@ -112,11 +137,14 @@ class OurMaidsScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
-                              onPressed:
-                                  () => successToast(
-                                    context,
-                                    "Your request has been sent to us, an executive will be contact you soon!",
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContactUsPage(),
                                   ),
+                                );
+                              },
                               child: Text(
                                 'HIRE ME',
                                 style: TextStyle(color: Colors.white),
