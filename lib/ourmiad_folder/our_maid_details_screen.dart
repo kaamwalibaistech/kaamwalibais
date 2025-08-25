@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../single_pages/contactus_page.dart';
 import '../utils/snackbar.dart';
 
 class OurMaidDetailsScreen extends StatelessWidget {
@@ -129,9 +130,11 @@ class OurMaidDetailsScreen extends StatelessWidget {
                 margin: const EdgeInsets.all(16),
                 child: ElevatedButton(
                   onPressed:
-                      () => successToast(
+                      () => Navigator.push(
                         context,
-                        "Your request has been sent to us, an executive will be contact you soon!",
+                        MaterialPageRoute(
+                          builder: (context) => ContactUsPage(),
+                        ),
                       ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,

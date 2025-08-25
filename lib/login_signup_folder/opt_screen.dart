@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -150,8 +151,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (pinCodeText == widget.otp) {
+                        int? status = await otpVarifyApi(
+                          widget.otp,
+                          widget.userData?.user?.id ?? "",
+                          context,
+                        );
+                        if (status != null || status == 201) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigationScreen(),
+                            ),
+                          );
+                        }
                         LocalStoragePref.instance?.storeLoginModel(
                           widget.userData!,
                         );
@@ -166,12 +180,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         // ScaffoldMessenger.of(
                         //   context,
                         // ).showSnackBar(SnackBar(content: Text("Success")));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NavigationScreen(),
-                          ),
-                        );
                       } else {
                         ScaffoldMessenger.of(
                           context,
