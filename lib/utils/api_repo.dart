@@ -11,8 +11,7 @@ import 'package:kaamwaalibais/models/review_model.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
-
-import '../models/whatweare_model.dart';
+import 'package:kaamwaalibais/models/whatweare_model.dart';
 
 Future<ReviewModel> reviewsApi() async {
   try {
@@ -175,10 +174,10 @@ Future<AboutUsModel?> fetchAboutUs() async {
       final jsonData = json.decode(response.body);
       return AboutUsModel.fromJson(jsonData);
     } else {
-      print("Error: ${response.statusCode}");
+      log("Error: ${response.statusCode}");
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }
@@ -224,10 +223,10 @@ Future<AboutUsModel?> bookMaidForm(
       final jsonData = json.decode(response.body);
       return AboutUsModel.fromJson(jsonData);
     } else {
-      print("Error: ${response.statusCode}");
+      log("Error: ${response.statusCode}");
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }
