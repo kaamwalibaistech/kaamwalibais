@@ -7,8 +7,6 @@ import 'package:kaamwaalibais/single_pages/contactus_page.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 
-import '../utils/snackbar.dart';
-
 class OurMaidsScreen extends StatefulWidget {
   const OurMaidsScreen({super.key});
 
@@ -135,7 +133,9 @@ class _OurMaidsScreenState extends State<OurMaidsScreen> {
                                     runSpacing: -8,
                                     children: [
                                       Chip(
-                                        label: Text(maid?.workExperience ?? ""),
+                                        label: Text(
+                                          "Exp. ${maid?.workExperience ?? ""} Years",
+                                        ),
                                         backgroundColor: Colors.deepPurple[50],
                                         labelStyle: TextStyle(
                                           color:
