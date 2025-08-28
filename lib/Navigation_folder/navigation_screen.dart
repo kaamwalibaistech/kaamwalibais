@@ -146,8 +146,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   backgroundColor: Colors.transparent,
                   title: const Text(
-                    "Kaamwalibais",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    "Kaamwalibais.com",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                   actions: [
                     IconButton(

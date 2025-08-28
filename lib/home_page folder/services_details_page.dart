@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/single_pages/services_item.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -75,51 +76,71 @@ class _ServicesDetailsPageState extends State<ServicesDetailsPage> {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewPadding.bottom,
                   ),
-                  child: Container(
-                    width: double.maxFinite,
-                    margin: EdgeInsets.all(22),
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
-                      border: Border.all(color: Colors.amber, width: 8),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            imageUrl: selectedService!.image,
-                            width: 180,
-                            height: 200,
-                            fit: BoxFit.fitHeight,
-                            placeholder: (context, url) => shimmer(),
-                            errorWidget:
-                                (context, url, error) => Icon(Icons.error),
-                          ),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.maxFinite,
+                        margin: EdgeInsets.all(22),
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                          border: Border.all(color: Colors.amber, width: 8),
                         ),
-                        SizedBox(height: 30),
-                        RichText(
-                          text: TextSpan(
-                            text: selectedService!.title,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "\n\n${selectedService!.content}",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl: selectedService!.image,
+                                width: 180,
+                                height: 200,
+                                fit: BoxFit.fitHeight,
+                                placeholder: (context, url) => shimmer(),
+                                errorWidget:
+                                    (context, url, error) => Icon(Icons.error),
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: 30),
+                            RichText(
+                              text: TextSpan(
+                                text: selectedService!.title,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: "\n\n${selectedService!.content}",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      ElevatedButton(
+                        onPressed:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookmaidScreen(),
+                              ),
+                            ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("Apply Now"),
+                      ),
+                      SizedBox(height: 15),
+                    ],
                   ),
                 ),
               ),
