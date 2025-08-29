@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/models/searchlocation_model.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:http/http.dart' as http;
+import 'package:location/location.dart' as loc;
 
 class BookmaidScreen extends StatefulWidget {
   const BookmaidScreen({super.key});
@@ -12,19 +19,78 @@ class BookmaidScreen extends StatefulWidget {
 
 class _BookmaidScreenState extends State<BookmaidScreen> {
   String? selectedGender;
+  SearchLocationModel? searchLocationModel;
   bool isLoading = false;
   TextEditingController locationValue = TextEditingController();
+  String? selectedLocationSuggestion;
   List<String> maidForOptions = [
-    'House Maid',
-    'Elder Care',
-    'House Cleaning',
-    'Cooking',
-    'Baby Sitter',
+    'HOUSEMAID',
+    'BABY SITTER',
+    'NANNY',
+    'COOKING',
+    'CHEF',
+    'ELDERLY CARE',
+    'PATIENT CARE',
   ];
-  List<String> requirementOptions = ['Full Time', 'Part Time'];
+  List<String> requirementOptions = [
+    'Immediately',
+    'Not Immediately',
+    'Not Sure',
+  ];
 
   String? selectedMaidFor;
   String? selectedRequirement;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   location();
+  // }
+
+  Future<SearchLocationModel> getLocation(String searchKey) async {
+    log("Log: enableLocation");
+    loc.Location location =
+        loc.Location(); //explicit reference to the Location class
+    if (!await location.serviceEnabled()) {
+      location.requestService();
+    }
+    // searchKey = "Mumbai";
+    Uri url = Uri.parse(
+      "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$searchKey&components=country:in&radius=500&key=AIzaSyCJq_EIK9nmK1SHahnMofcnVkTFIe0U7cA",
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        return SearchLocationModel.fromJson(data);
+      }
+    } catch (e) {
+      throw Exception();
+    }
+    return throw Exception();
+  }
+
+  // final List<String> cities = [
+  //   "Mumbai",
+  //   "Delhi",
+  //   "Bengaluru",
+  //   "Hyderabad",
+  //   "Chennai",
+  //   "Kolkata",
+  //   "Pune",
+  //   "Jaipur",
+  // ];
+
+  // List<String> filteredCities = [];
+
+  // void _filterCities(String query) {
+  //   setState(() {
+  //     filteredCities =
+  //         cities
+  //             .where((city) => city.toLowerCase().contains(query.toLowerCase()))
+  //             .toList();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,33 +133,82 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                 ),
               ),
               SizedBox(height: 30),
+              TypeAheadField<String>(
+                // must return a Future/List
+                suggestionsCallback: (pattern) async {
+                  if (pattern.isEmpty) return [];
+                  try {
+                    searchLocationModel = await getLocation(pattern);
+                    log(searchLocationModel!.predictions.first.description);
+                    return searchLocationModel!.predictions
+                        .map((prediction) => prediction.description)
+                        .toList();
+                  } catch (e) {
+                    log(e.toString());
+                    return [];
+                  }
+                },
+                // how each suggestion looks
+                itemBuilder: (context, String suggestion) {
+                  return ListTile(
+                    leading: Icon(Icons.location_on_outlined),
+                    title: Text(suggestion),
+                  );
+                },
+                // what happens when user taps suggestion
+                onSelected: (String suggestion) {
+                  setState(() {
+                    selectedLocationSuggestion = suggestion;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("You selected $suggestion")),
+                  );
+                },
+                // build the search box itself
+                builder: (context, controller, focusNode) {
+                  if (selectedLocationSuggestion != null) {
+                    return TextField(
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: "Selected Location",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      controller: TextEditingController(
+                        text: selectedLocationSuggestion,
+                      ),
+                    );
+                  } else {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      decoration: InputDecoration(
+                        labelText: "Search Location",
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    );
+                  }
+                },
+              ),
+              SizedBox(height: 20),
 
+              // SizedBox(height: 20),
               Text(
                 "I need maid for...",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 20),
               _buildDropdown(
                 hint: "Select",
                 value: selectedMaidFor,
                 items: maidForOptions,
                 onChanged: (value) => setState(() => selectedMaidFor = value),
               ),
-
-              SizedBox(height: 25),
-              Text("Location", style: TextStyle(fontWeight: FontWeight.w600)),
-              SizedBox(height: 8),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-
               SizedBox(height: 25),
               Text(
                 "Requirement",
@@ -107,7 +222,6 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                 onChanged:
                     (value) => setState(() => selectedRequirement = value),
               ),
-
               SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -126,13 +240,14 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    EasyLoading.show();
-                    final response = await bookMaidForm(
-                      selectedMaidFor.toString(),
-                      locationValue.toString(),
-                      selectedRequirement.toString(),
-                      selectedGender.toString(),
-                    );
+                    // location();
+                    // EasyLoading.show();
+                    // final response = await bookMaidForm(
+                    //   selectedMaidFor.toString(),
+                    //   locationValue.toString(),
+                    //   selectedRequirement.toString(),
+                    //   selectedGender.toString(),
+                    // );
                   },
 
                   child: Text(
