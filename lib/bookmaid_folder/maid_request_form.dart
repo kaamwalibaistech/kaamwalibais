@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:kaamwaalibais/models/user_login_model.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 
 class MaidRequestForm extends StatefulWidget {
-  const MaidRequestForm({super.key});
+  final String? selectedLocation;
+  final String? maidFor;
+  final String? requirements;
+  const MaidRequestForm({
+    super.key,
+    this.selectedLocation,
+    this.maidFor,
+    this.requirements,
+  });
 
   @override
   State<MaidRequestForm> createState() => _MaidRequestFormState();
 }
 
 class _MaidRequestFormState extends State<MaidRequestForm> {
-  // Form controllers
   String? selectedHours;
+  String? selectedPrice;
   String? numberOfPeople;
   String? houseSize;
   String? religion;
@@ -27,7 +39,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
 
   bool agreeTerms = false;
 
-  final TextEditingController commentController = TextEditingController();
+  final TextEditingController? commentController = TextEditingController();
 
   final List<Map<String, String>> hoursOptions = [
     {"label": "1 Hours Daily", "price": "₹5000"},
@@ -40,6 +52,12 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
     {"label": "12 Hours Daily", "price": "₹18000"},
     {"label": "24 Hours Daily", "price": "₹20000"},
   ];
+  GetUserlogIn? userData;
+  @override
+  void initState() {
+    super.initState();
+    userData = LocalStoragePref().getLoginModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +106,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                   onTap: () {
                     setState(() {
                       selectedHours = option["label"];
+                      selectedPrice = option["price"];
                     });
                   },
                   child: Container(
@@ -132,7 +151,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
 
             // Dropdowns
             buildDropdown(
-              "Number of people in house",
+              "Number of people in house *",
               ["1-2", "3-5", "6+"],
               numberOfPeople,
               (val) {
@@ -140,7 +159,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
               },
             ),
             buildDropdown(
-              "Size of the house",
+              "Size of the house *",
               ["1BHK", "2BHK", "3BHK", "Villa"],
               houseSize,
               (val) {
@@ -275,17 +294,181 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                   backgroundColor: Colors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (!agreeTerms) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please agree to terms and conditions"),
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            12,
+                          ), // rounded corners
+                        ),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ), // margin from screen edges
+                        duration: const Duration(seconds: 3),
+                        content: Row(
+                          children: [
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Text(
+                                "Please agree to terms and conditions",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        action: SnackBarAction(
+                          label: "OK",
+                          textColor: Colors.white,
+                          onPressed: () {},
+                        ),
                       ),
                     );
+
                     return;
+                  } else {
+                    if ((selectedHours != null && selectedHours!.isNotEmpty) &&
+                        (numberOfPeople != null &&
+                            numberOfPeople!.isNotEmpty) &&
+                        (houseSize != null && houseSize!.isNotEmpty) &&
+                        (gender != null && gender!.isNotEmpty) &&
+                        (agePreference != null && agePreference!.isNotEmpty)) {
+                      EasyLoading.show();
+                      final message = await maidEnquiryMailSendApi(
+                        userData?.user?.name ?? "",
+                        userData?.user?.mobileno ?? "",
+                        userData?.user?.emailid ?? "",
+                        widget.selectedLocation ?? "",
+                        widget.requirements ?? "",
+                        selectedHours ?? "",
+                        gender ?? "",
+                        selectedHours ?? "",
+                        selectedPrice ?? "",
+                        numberOfPeople ?? "",
+                        houseSize ?? "",
+                        religion ?? "",
+                        agePreference ?? "",
+                        widget.maidFor ?? "",
+                        commentController?.text ?? "",
+                      );
+                      if (message is String && message == "success") {
+                        EasyLoading.dismiss();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            duration: const Duration(seconds: 3),
+                            content: Row(
+                              children: const [
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                  size: 26,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    "Form submitted successfully!",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        EasyLoading.dismiss();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            duration: const Duration(seconds: 3),
+                            content: Row(
+                              children: const [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.white,
+                                  size: 26,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    "Something went wrong. Please try again!",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.orange.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          duration: const Duration(seconds: 3),
+                          content: Row(
+                            children: const [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  "Please fill in all required fields",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                   }
-                  // Submit form logic
-                  debugPrint("Form Submitted!");
                 },
                 child: const Text(
                   "SUBMIT",

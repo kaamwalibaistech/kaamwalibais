@@ -263,41 +263,62 @@ Future<String?> contactUsApi(
   return null;
 }
 
+Future<String?> maidEnquiryMailSendApi(
+  String? name,
+  String? phone,
+  String? email,
+  String? location,
+  String? requirement,
+  String? selectedHours,
+  String? gender,
+  String? selectedHour,
+  String? selectedPrice,
+  String? numberOfPeople,
+  String? houseSize,
+  String? religion,
+  String? agePreference,
+  String? maidFor,
+  String? comments,
+) async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.sendMailEnquiry);
 
+    final body = {
+      "customer_name": name ?? "",
+      "contact_no": phone ?? "",
+      "email_id": email ?? "",
+      "area": location ?? "",
+      "requirement": requirement ?? "",
+      "package": selectedHours ?? "",
+      "gender_pref": gender ?? "",
+      "time_slot": selectedHour ?? "",
+      "salary_budget": selectedPrice ?? "",
+      "no_of_people": numberOfPeople ?? "",
+      "house_type": houseSize ?? "",
+      "religion": religion ?? "",
+      "age_pref": agePreference ?? "",
+      "service": maidFor ?? "",
+      "other_comments": comments ?? "",
+    };
 
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: json.encode(body),
+    );
 
-
-// Future<String?> contactUsApi(
-//   String name,
-//   String phone,
-//   String email,
-//   String query,
-// ) async {
-//   try {
-//     final url = Uri.parse(ApiRoutes.url + ApiRoutes.contactus);
-//     final body = {
-//       'contact_name': name,
-//       'contact_phone': phone,
-//       'contact_emailid': email,
-//       'contact_message': query,
-//     };
-//     final response = await http.post(
-//       url,
-//       headers: {'Content-Type': 'application/json'},
-//       body: json.encode(body),
-//     );
-//     if (response.statusCode == 201) {
-//       final jsonData = json.decode(response.body);
-//       log(jsonData);
-//       return jsonData['Message'];
-//     } else {
-//       log("Error: ${response.statusCode}");
-//     }
-//   } catch (e) {
-//     log("Exception: $e");
-//   }
-//   return null;
-// }
-
-
-
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      log("✅ Success: $jsonData");
+      return jsonData["status"];
+    } else {
+      log("❌ Error: ${response.statusCode} ${response.body}");
+    }
+  } catch (e) {
+    log("⚠️ Exception: $e");
+  }
+  return null;
+}

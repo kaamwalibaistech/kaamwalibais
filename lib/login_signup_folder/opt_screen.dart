@@ -34,6 +34,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (secondsRemaining > 0) {
         setState(() {
@@ -130,13 +131,32 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         ),
                       ),
                       const SizedBox(width: 5),
-                      Text(
-                        "$secondsRemaining s",
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                        ),
-                      ),
+                      secondsRemaining != 0
+                          ? Text(
+                            "$secondsRemaining s",
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          )
+                          : InkWell(
+                            onTap: () {
+                              setState(() {
+                                secondsRemaining = 30;
+                                startTimer();
+                              });
+                            },
+                            child: const Text(
+                              "Click here",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.green,
+                                decorationThickness: 2,
+                              ),
+                            ),
+                          ),
                     ],
                   ),
 
