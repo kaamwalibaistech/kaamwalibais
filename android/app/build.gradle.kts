@@ -33,7 +33,7 @@ kotlinOptions {
 defaultConfig {
     applicationId = "com.innowrap.user.kaamwalibais"
     minSdk = flutter.minSdkVersion
-    targetSdk = flutter.targetSdkVersion
+    targetSdk = 35
     versionCode = flutter.versionCode
     versionName = flutter.versionName
 }
