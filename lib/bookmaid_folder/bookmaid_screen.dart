@@ -2,12 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
-import 'package:kaamwaalibais/models/searchlocation_model.dart';
-import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:http/http.dart' as http;
+import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/bookmaid_folder/maid_request_form.dart';
+import 'package:kaamwaalibais/models/searchlocation_model.dart';
 import 'package:location/location.dart' as loc;
 
 class BookmaidScreen extends StatefulWidget {
@@ -223,12 +222,12 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                     (value) => setState(() => selectedRequirement = value),
               ),
               SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [_buildRadio("Male"), _buildRadio("Female")],
-              ),
 
-              SizedBox(height: 30),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [_buildRadio("Male"), _buildRadio("Female")],
+              // ),
+              SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -240,14 +239,12 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    // location();
-                    // EasyLoading.show();
-                    // final response = await bookMaidForm(
-                    //   selectedMaidFor.toString(),
-                    //   locationValue.toString(),
-                    //   selectedRequirement.toString(),
-                    //   selectedGender.toString(),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MaidRequestForm(),
+                      ),
+                    );
                   },
 
                   child: Text(
