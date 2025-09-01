@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/maid_register_form.dart';
 import 'package:kaamwaalibais/login_signup_folder/opt_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/signup_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
@@ -83,11 +86,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
+                            EasyLoading.show();
+
                             GetUserlogIn? data = await getUserLogIn(
                               phoneNumberController.text,
                             );
                             String otpData = data?.otp ?? "";
                             if (data != null) {
+                              EasyLoading.dismiss();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -161,7 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 10),
                       OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MaidRegistrationForm(),
+                            ),
+                          );
+                        },
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                           side: const BorderSide(color: Colors.purple),
@@ -180,7 +193,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 15),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigationScreen(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                           backgroundColor:

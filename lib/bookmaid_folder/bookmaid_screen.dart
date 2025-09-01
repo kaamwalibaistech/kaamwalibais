@@ -17,7 +17,7 @@ class BookmaidScreen extends StatefulWidget {
 }
 
 class _BookmaidScreenState extends State<BookmaidScreen> {
-  String? selectedGender;
+  // String? selectedGender;
   SearchLocationModel? searchLocationModel;
   bool isLoading = false;
   TextEditingController locationValue = TextEditingController();
@@ -223,10 +223,6 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
               ),
               SizedBox(height: 25),
 
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //   children: [_buildRadio("Male"), _buildRadio("Female")],
-              // ),
               SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
@@ -239,10 +235,56 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                     ),
                   ),
                   onPressed: () async {
+                    if (selectedMaidFor == null ||
+                        selectedRequirement == null ||
+                        selectedLocationSuggestion == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.redAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          duration: const Duration(seconds: 3),
+                          content: Row(
+                            children: const [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  "Please fill all fields before continuing",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MaidRequestForm(),
+                        builder:
+                            (context) => MaidRequestForm(
+                              selectedLocation:
+                                  selectedLocationSuggestion.toString(),
+                              maidFor: selectedMaidFor.toString(),
+                              requirements: selectedRequirement.toString(),
+                            ),
                       ),
                     );
                   },
@@ -283,17 +325,17 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
     );
   }
 
-  Widget _buildRadio(String gender) {
-    return Row(
-      children: [
-        Radio<String>(
-          value: gender,
-          groupValue: selectedGender,
-          onChanged: (value) => setState(() => selectedGender = value),
-          activeColor: Theme.of(context).colorScheme.primary,
-        ),
-        Text(gender),
-      ],
-    );
-  }
+  // Widget _buildRadio(String gender) {
+  //   return Row(
+  //     children: [
+  //       Radio<String>(
+  //         value: gender,
+  //         groupValue: selectedGender,
+  //         onChanged: (value) => setState(() => selectedGender = value),
+  //         activeColor: Theme.of(context).colorScheme.primary,
+  //       ),
+  //       Text(gender),
+  //     ],
+  //   );
+  // }
 }
