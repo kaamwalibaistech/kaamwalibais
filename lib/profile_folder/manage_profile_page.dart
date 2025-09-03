@@ -154,6 +154,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     ),
                   ),
                   onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                        content: Text("Working on it"),
+                      ),
+                    );
+
                     // Save details logic here
                     debugPrint("Name: ${nameController.text}");
                     debugPrint("Email: ${emailController.text}");

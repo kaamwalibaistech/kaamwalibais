@@ -5,14 +5,20 @@ import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 
 class MaidRequestForm extends StatefulWidget {
-  final String? selectedLocation;
-  final String? maidFor;
-  final String? requirements;
+  final String selectedLocation;
+  final String maidFor;
+  final String requirements;
+  final String name;
+  final String email;
+  final String phoneNumber;
   const MaidRequestForm({
     super.key,
-    this.selectedLocation,
-    this.maidFor,
-    this.requirements,
+    required this.selectedLocation,
+    required this.maidFor,
+    required this.requirements,
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
   });
 
   @override
@@ -95,7 +101,10 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: screenWidth < 600 ? 2 : 4,
-                childAspectRatio: 3,
+                childAspectRatio:
+                    screenWidth < 600
+                        ? 3
+                        : 2.5, // give more height on bigger screens
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
               ),
@@ -121,23 +130,37 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          option["label"]!,
-                          style: TextStyle(
-                            color:
-                                selectedHours == option["label"]
-                                    ? Colors.white
-                                    : Colors.black,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          // 👈 prevents overflow
+                          child: Text(
+                            option["label"]!,
+                            textAlign: TextAlign.center,
+                            overflow:
+                                TextOverflow
+                                    .ellipsis, // truncate gracefully if too long
+                            maxLines: 2, // allow wrapping to 2 lines
+                            style: TextStyle(
+                              color:
+                                  selectedHours == option["label"]
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        Text(
-                          "Salary ${option["price"]} / Month",
-                          style: TextStyle(
-                            color:
-                                selectedHours == option["label"]
-                                    ? Colors.white
-                                    : Colors.black,
+                        const SizedBox(height: 4),
+                        Flexible(
+                          child: Text(
+                            "Salary ${option["price"]} / Month",
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                              color:
+                                  selectedHours == option["label"]
+                                      ? Colors.white
+                                      : Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -346,9 +369,9 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                         (agePreference != null && agePreference!.isNotEmpty)) {
                       EasyLoading.show();
                       final message = await maidEnquiryMailSendApi(
-                        userData?.user?.name ?? "",
-                        userData?.user?.mobileno ?? "",
-                        userData?.user?.emailid ?? "",
+                        widget.name ?? "",
+                        widget.phoneNumber ?? "",
+                        widget.email ?? "",
                         widget.selectedLocation ?? "",
                         widget.requirements ?? "",
                         selectedHours ?? "",
@@ -363,6 +386,26 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                         commentController?.text ?? "",
                       );
                       if (message is String && message == "success") {
+                        /// ✅ Clear all fields after success
+                        setState(() {
+                          selectedHours = null;
+                          selectedPrice = null;
+                          numberOfPeople = null;
+                          houseSize = null;
+                          religion = null;
+                          gender = null;
+                          agePreference = null;
+                          houseMaid = false;
+                          cookingHelp = false;
+                          bathroomCleaning = false;
+                          clothesWashing = false;
+                          dusting = false;
+                          floorCleaning = false;
+                          groceryShopping = false;
+                          utensilCleaning = false;
+                          agreeTerms = false;
+                        });
+                        commentController?.clear();
                         EasyLoading.dismiss();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
