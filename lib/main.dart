@@ -14,6 +14,13 @@ void main() async {
     await LocalStoragePref.instance?.initPrefBox();
   });
 
+  // WidgetsFlutterBinding.ensureInitialized();
+
+  // SchedulerBinding.instance.addTimingsCallback((timings) {
+  //   for (var t in timings) {
+  //     print("Build: ${t.buildDuration}, Raster: ${t.rasterDuration}");
+  //   }
+  // });
   runApp(
     MultiProvider(
       providers: [

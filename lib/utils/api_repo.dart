@@ -8,6 +8,10 @@ import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/models/how_works_model.dart';
 import 'package:kaamwaalibais/models/maidlist_model.dart';
 import 'package:kaamwaalibais/models/review_model.dart';
+import 'package:kaamwaalibais/models/salary_budget_model.dart';
+import 'package:kaamwaalibais/models/sign_up_model.dart';
+import 'package:kaamwaalibais/models/super_catogries_model.dart';
+import 'package:kaamwaalibais/models/time_slot_moel.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/models/whatweare_model.dart';
 import 'package:kaamwaalibais/utils/api_routes.dart';
@@ -319,6 +323,144 @@ Future<String?> maidEnquiryMailSendApi(
     }
   } catch (e) {
     log("⚠️ Exception: $e");
+  }
+  return null;
+}
+
+Future<int?> maidRegistrationFormApi(
+  String? name,
+  String? city,
+  String? area,
+  String? address,
+  String? language,
+  String? phone,
+  String? age,
+  String? maritalStatus,
+  String? gender,
+  String? religion,
+  String? workExp,
+  String? selectedPackage,
+  String? timeSlot,
+  String? mainService,
+  // String? comments,
+) async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.maidFormRegister);
+
+    final body = {
+      "name": name ?? "",
+      "city": city ?? "",
+      "area": area ?? "",
+      "address": address ?? "",
+      "language": language ?? "",
+      "phoneno": phone ?? "",
+      "age": age ?? "",
+      "marital_status": maritalStatus ?? "",
+      "gender": gender ?? "",
+      "religion_id": religion ?? "",
+      "work_experience": workExp ?? "",
+      "package_id": selectedPackage ?? "",
+      "timeslot_id": timeSlot ?? "",
+      "super_cat_id[]": mainService ?? "",
+      "cat_id[]": "",
+      "sub_cat_id[]": "",
+    };
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return jsonData["code"];
+    } else {
+      log("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    log("⚠️ Exception: $e");
+  }
+  return null;
+}
+
+Future<TimeslotModel?> timeSlotApi() async {
+  try {
+    final url = Uri.parse("https://kamwalibais.com/api/timeslots");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return timeslotModelFromJson(response.body);
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+  return null;
+}
+
+Future<SuperCategoryModel?> fetchSuperCategories() async {
+  try {
+    final url = Uri.parse("https://kamwalibais.com/api/get-supercategories");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return SuperCategoryModel.fromJson(jsonData);
+    } else {
+      print("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+  return null;
+}
+
+Future<PackageModel?> fetchPackages() async {
+  try {
+    final url = Uri.parse("https://kamwalibais.com/api/get_packages");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return PackageModel.fromJson(jsonData);
+    } else {
+      print("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+  return null;
+}
+
+Future<SignupModel?> signUpApi(
+  String name,
+  String mobileNo,
+  String emailId,
+  String country,
+) async {
+  try {
+    final url = Uri.parse(ApiRoutes.url + ApiRoutes.signUp);
+    final response = await http.post(
+      url,
+      body: {
+        'register_name': name,
+        'register_mobileno': mobileNo,
+        'register_emailid': emailId,
+        'register_country': country,
+      },
+    );
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      return SignupModel.fromJson(jsonData);
+    } else {
+      log("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    log("Exception: $e");
   }
   return null;
 }

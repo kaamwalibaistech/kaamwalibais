@@ -41,20 +41,7 @@ defaultConfig {
 // Signing configuration for release
 signingConfigs {
     create("release") {
-         val alias = keystoreProperties["keyAlias"] as String?
-        val keyPass = keystoreProperties["keyPassword"] as String?
-        val storePath = keystoreProperties["storeFile"] as String?
-        val storePass = keystoreProperties["storePassword"] as String?
-
-        if (alias != null && keyPass != null && storePath != null && storePass != null) {
-            keyAlias = alias
-            keyPassword = keyPass
-            storeFile = file(storePath)
-            storePassword = storePass
-        } else {
-            // This helps produce a clear error if any field is missing
-            throw GradleException("Missing one or more signing properties in key.properties (keyAlias, keyPassword, storeFile, storePassword).")
-        }
+       
     
     
     }

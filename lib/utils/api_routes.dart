@@ -16,4 +16,6 @@ class ApiRoutes {
   static const String bookmaid = "maid-list";
   static const String contactus = "contact_us";
   static const String sendMailEnquiry = "send-enquiry-mail";
+  static const String maidFormRegister = "maid_detailssubmit_create";
+  static const String signUp = "membersubmit";
 }
