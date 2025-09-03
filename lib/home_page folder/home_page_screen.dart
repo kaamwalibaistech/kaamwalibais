@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:kaamwaalibais/models/home_model.dart';
 import 'package:kaamwaalibais/providers/homepage_provider.dart';
 import 'package:provider/provider.dart';
@@ -21,12 +21,32 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<void> checkForUpdate() async {
+    try {
+      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+        if (updateInfo.immediateUpdateAllowed) {
+          await InAppUpdate.performImmediateUpdate();
+        } else if (updateInfo.flexibleUpdateAllowed) {
+          await InAppUpdate.startFlexibleUpdate();
+          await InAppUpdate.completeFlexibleUpdate();
+        } else {
+          print("Update available, but no method allowed.");
+        }
+      }
+    } catch (e) {
+      print("Error checking for update: $e");
+    }
+  }
+
   late YoutubePlayerController _controller;
   late HomepageProvider homePro;
   HomeModel? homeModel;
   @override
   void initState() {
     super.initState();
+    checkForUpdate();
     final videoId = YoutubePlayer.convertUrlToId(
       homeModel?.getVideoUrl ??
           "https://youtu.be/olDOicf6xIM?si=M3oh9W-j-hKgI6sF",

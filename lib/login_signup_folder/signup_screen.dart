@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:kaamwaalibais/login_signup_folder/otp_signup_screen.dart';
+import 'package:kaamwaalibais/models/sign_up_model.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  SignupModel? data;
+
+  // Create controllers
+  final nameController = TextEditingController();
+  final mobileController = TextEditingController();
+  final emailController = TextEditingController();
+  final countryController = TextEditingController(text: "India");
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +44,62 @@ class SignupScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const CustomTextField(hintText: 'Enter Your Name'),
+                  CustomTextField(
+                    hintText: 'Enter Your Name',
+                    controller: nameController,
+                  ),
                   const SizedBox(height: 15),
-                  const CustomTextField(hintText: 'Enter Mobile Number'),
+                  CustomTextField(
+                    hintText: 'Enter Mobile Number',
+                    controller: mobileController,
+                  ),
                   const SizedBox(height: 15),
-                  const CustomTextField(hintText: 'Enter Your Email'),
+                  CustomTextField(
+                    hintText: 'Enter Your Email',
+                    controller: emailController,
+                  ),
                   const SizedBox(height: 15),
-                  const CustomTextField(
+                  CustomTextField(
                     hintText: 'India',
+                    controller: countryController,
                   ), // You can replace this with a dropdown if needed
                   const SizedBox(height: 25),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // handle continue
+                      onPressed: () async {
+                        EasyLoading.show();
+
+                        // Example: Read user inputs
+
+                        // Example: call your API here
+                        data = await signUpApi(
+                          nameController.text,
+                          mobileController.text,
+                          emailController.text,
+                          countryController.text,
+                        );
+                        if (data!.response == 3) {
+                          EasyLoading.dismiss();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(data?.msg ?? "")),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => SignupOtpVerificationScreen(
+                                    otp: data?.data["otp"] ?? "",
+                                    userData: data,
+                                  ),
+                            ),
+                          );
+                        } else {
+                          EasyLoading.dismiss();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(data?.msg ?? "")),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -93,12 +151,18 @@ class SignupScreen extends StatelessWidget {
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller;
 
-  const CustomTextField({super.key, required this.hintText});
+  const CustomTextField({
+    super.key,
+    required this.hintText,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller, // ✅ fixed: now it stores values
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,

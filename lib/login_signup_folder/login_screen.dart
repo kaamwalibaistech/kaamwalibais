@@ -105,6 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
                             } else {
+                              EasyLoading.dismiss();
+
                               failledToast(
                                 context,
                                 "Mobile Number is Not Register",
