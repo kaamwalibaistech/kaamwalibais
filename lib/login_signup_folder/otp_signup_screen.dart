@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/models/sign_up_model.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class SignupOtpVerificationScreen extends StatefulWidget {
@@ -170,39 +174,39 @@ class _SignupOtpVerificationScreenState
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     onPressed: () async {
-                      // if (pinCodeText == widget.otp) {
-                      //   int? status = await otpVarifyApi(
-                      //     widget.otp,
-                      //     widget.userData?.user?.id ?? "",
-                      //     context,
-                      //   );
-                      //   if (status != null || status == 201) {
-                      //     Navigator.pushReplacement(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (context) => NavigationScreen(),
-                      //       ),
-                      //     );
-                      //   }
-                      //   LocalStoragePref.instance?.storeLoginModel(
-                      //     widget.userData!.data,
-                      //   );
-                      //   LocalStoragePref.instance?.setLoginBool(true);
-                      //   log(
-                      //     LocalStoragePref.instance
-                      //             ?.getLoginBool()
-                      //             .toString() ??
-                      //         "null",
-                      //   );
+                      if (pinCodeText == widget.otp) {
+                        int? status = await otpVarifyApi(
+                          widget.otp,
+                          widget.userData?.data["user"]["id"] ?? "",
+                          context,
+                        );
+                        if (status != null || status == 201) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigationScreen(),
+                            ),
+                          );
+                        }
+                        LocalStoragePref.instance?.storeLoginModel(
+                          widget.userData!.data,
+                        );
+                        LocalStoragePref.instance?.setLoginBool(true);
+                        log(
+                          LocalStoragePref.instance
+                                  ?.getLoginBool()
+                                  .toString() ??
+                              "null",
+                        );
 
-                      //   // ScaffoldMessenger.of(
-                      //   //   context,
-                      //   // ).showSnackBar(SnackBar(content: Text("Success")));
-                      // } else {
-                      //   ScaffoldMessenger.of(
-                      //     context,
-                      //   ).showSnackBar(SnackBar(content: Text("not Success")));
-                      // }
+                        //   // ScaffoldMessenger.of(
+                        //   //   context,
+                        //   // ).showSnackBar(SnackBar(content: Text("Success")));
+                      } else {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text("not Success")));
+                      }
                     },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
