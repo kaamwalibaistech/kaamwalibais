@@ -6,7 +6,6 @@ import '../utils/api_repo.dart';
 class HomepageProvider extends ChangeNotifier {
   bool isloading = true;
 
-  // HomeModel? homepage;
   Future<HomeModel?> getHomeData() async {
     HomeModel? homepage = await homePageApi();
 

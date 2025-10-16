@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/models/maidlist_model.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maid_details_screen.dart';
+import 'package:kaamwaalibais/ourmiad_folder/shimmer.dart';
 import 'package:kaamwaalibais/single_pages/contactus_page.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
@@ -63,7 +64,7 @@ class _OurMaidsScreenState extends State<OurMaidsScreen> {
         ),
         body:
             maidlistModel == null
-                ? Center(child: const CircularProgressIndicator())
+                ? MaidsShimmer()
                 : ListView.builder(
                   padding: EdgeInsets.all(12),
                   itemCount: maidlistModel?.data?.length ?? 0,

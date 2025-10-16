@@ -77,7 +77,6 @@ Future<int?> otpVarifyApi(
 ) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.otpVarify);
-
     final response = await http.post(
       url,
       body: {'otp': otp, 'member_id': memberId},
@@ -87,9 +86,30 @@ Future<int?> otpVarifyApi(
     } else if (response.statusCode == 201) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       LocalStoragePref().setLoginTocken(data['token']);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(data['message'])));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.blueGrey.shade800,
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  data['message'],
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
       String aa = LocalStoragePref().gsetLoginTocken() ?? "null";
       log(aa);
       return response.statusCode;
