@@ -50,7 +50,7 @@ Future<HomeModel?> homePageApi() async {
 }
 
 // <<<<<<< ritesh
-Future<GetUserlogIn?> getUserLogIn(phoneNumber) async {
+Future<GetUserlogIn?> getUserLogIn(String phoneNumber) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.login);
 

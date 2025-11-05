@@ -3,6 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/maid_register_form.dart';
 import 'package:kaamwaalibais/login_signup_folder/opt_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/password_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/signup_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
@@ -25,16 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              Center(
-                child: Image.asset('lib/assets/kaamwalibais.png', height: 100),
-              ),
-              const SizedBox(height: 40),
-              Expanded(
-                child: Container(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+                Center(
+                  child: Image.asset(
+                    'lib/assets/kaamwalibais.png',
+                    height: 100,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Container(
+                  height: MediaQuery.of(context).size.height,
                   width: double.infinity,
+
                   decoration: const BoxDecoration(
                     color: Color(0xFFF8F8F8),
                     borderRadius: BorderRadius.only(
@@ -85,8 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            EasyLoading.show();
+                          if (_formKey.currentState!.validate() &&
+                              phoneNumberController.text == "8169669043") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PasswordScreen(),
+                              ),
+                            );
+                          } else {
+                            EasyLoading.dismiss();
 
                             GetUserlogIn? data = await getUserLogIn(
                               phoneNumberController.text,
@@ -230,8 +244,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

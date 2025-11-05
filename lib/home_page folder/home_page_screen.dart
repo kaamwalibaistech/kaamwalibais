@@ -24,7 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> checkForUpdate() async {
     try {
       AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         if (updateInfo.immediateUpdateAllowed) {
           await InAppUpdate.performImmediateUpdate();
@@ -43,28 +42,53 @@ class _MyHomePageState extends State<MyHomePage> {
   late YoutubePlayerController _controller;
   late HomepageProvider homePro;
   HomeModel? homeModel;
+  bool _videoError = false;
+
   @override
   void initState() {
     super.initState();
-    checkForUpdate();
-    final videoId = YoutubePlayer.convertUrlToId(
-      homeModel?.getVideoUrl ??
-          "https://youtu.be/olDOicf6xIM?si=M3oh9W-j-hKgI6sF",
-    );
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId ?? "",
-      flags: YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
-    );
-
     getReady();
+    checkForUpdate();
+
+    // Initialize with safe default video
+    _controller = YoutubePlayerController(
+      initialVideoId: "olDOicf6xIM",
+      flags: const YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
+    );
   }
 
   getReady() async {
-    homePro = Provider.of<HomepageProvider>(context, listen: false);
-    final apicall = await homePro.getHomeData();
-    setState(() {
-      homeModel = apicall;
-    });
+    try {
+      homePro = Provider.of<HomepageProvider>(context, listen: false);
+      final apicall = await homePro.getHomeData();
+      if (!mounted) return;
+
+      setState(() {
+        homeModel = apicall;
+        final rawVideoUrl = homeModel?.getVideoUrl?.toString() ?? "";
+        String? videoId = YoutubePlayer.convertUrlToId(rawVideoUrl);
+
+        // handle invalid or numeric video IDs
+        if (videoId == null ||
+            videoId.isEmpty ||
+            int.tryParse(videoId) != null) {
+          _videoError = true;
+          videoId = "olDOicf6xIM";
+        } else {
+          _videoError = false;
+        }
+
+        _controller = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
+        );
+      });
+    } catch (e) {
+      debugPrint("Error loading video: $e");
+      setState(() {
+        _videoError = true;
+      });
+    }
   }
 
   List<Map> logo = [
@@ -107,12 +131,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+
     return homePro.isloading == true
         ? shimmerHomeScreen()
         : YoutubePlayerBuilder(
           player: YoutubePlayer(
             controller: _controller,
             showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.redAccent,
+            onReady: () {
+              debugPrint('YouTube player ready.');
+            },
+            // 👇 Hide the actual video player if error
+            bottomActions: _videoError ? [] : null,
           ),
 
           builder: (context, player) {
@@ -121,19 +154,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () => _launchUrl("https://wa.me/+919819221144"),
                 child: Image.asset("lib/assets/whatsapp.png", height: 40),
               ),
-              body: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      _headerSection(),
-                      _servicesSection(),
-                      _howItWorksSection(),
-                      reviewsSection(isHomePage: true),
-                      _videoSection(player),
-                      SizedBox(height: 10),
-                      _socialSection(),
-                    ],
+              body: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          _headerSection(isTablet),
+                          _servicesSection(isTablet),
+                          _howItWorksSection(isTablet),
+                          reviewsSection(isHomePage: true),
+                          _videoSection(player, isTablet),
+                          const SizedBox(height: 10),
+                          _socialSection(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -142,99 +180,144 @@ class _MyHomePageState extends State<MyHomePage> {
         );
   }
 
-  Widget _headerSection() => ClipRRect(
+  Widget _headerSection(bool isTablet) => ClipRRect(
     borderRadius: BorderRadius.circular(10),
     child: CachedNetworkImage(
       imageUrl:
           homeModel?.getSliderList?[0].photo ??
           "https://kamwalibais.com/admin/images/slider/slider-11526456763.jpg",
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: isTablet ? 350 : 250,
       placeholder:
           (context, url) => Container(
-            height: MediaQuery.of(context).size.height * 0.25,
-            width: double.maxFinite,
+            height: isTablet ? 350 : 250,
+            width: double.infinity,
             color: Colors.deepPurpleAccent.shade100.withAlpha(50),
           ),
     ),
   );
 
-  Widget _servicesSection() => Column(
-    children: [
-      const Padding(
-        padding: EdgeInsets.symmetric(vertical: 15.0),
-        child: Text("OUR SERIVCES", style: TextStyle(fontSize: 20)),
-      ),
-      GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 10,
-          crossAxisCount: 2,
-          childAspectRatio: 0.75,
+  Widget _servicesSection(bool isTablet) {
+    final crossAxisCount = isTablet ? 4 : 2;
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0),
+          child: Text(
+            "OUR SERVICES",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          ),
         ),
-        itemCount: services.length,
-        itemBuilder:
-            (context, index) => GestureDetector(
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => ServicesDetailsPage(
-                            serviceName: services[index]["name"] ?? "maids",
-                          ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 15,
+            childAspectRatio: isTablet ? 0.8 : 0.75,
+          ),
+          itemCount: services.length,
+          itemBuilder:
+              (context, index) => GestureDetector(
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => ServicesDetailsPage(
+                              serviceName: services[index]["name"] ?? "maids",
+                            ),
+                      ),
                     ),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-              child: Card(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(15),
+                          ),
+                          child: Image.asset(
+                            services[index]["image"] ?? "",
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                      child: Image.asset(
-                        services[index]["image"] ?? "",
-                        width: 180,
-                        height: 200,
-                        fit: BoxFit.fitHeight,
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          services[index]["name"] ?? "",
+                          style: TextStyle(
+                            fontSize: isTablet ? 18 : 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Text(
-                        services[index]["name"] ?? "",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-      ),
-    ],
-  );
+        ),
+      ],
+    );
+  }
 
-  Widget _howItWorksSection() => Column(
+  Widget _howItWorksSection(bool isTablet) => Column(
     children: [
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text("HOW IT WORKS", style: TextStyle(fontSize: 20)),
       ),
-      Image.asset("lib/assets/kwbmaid.jpeg", fit: BoxFit.cover),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.asset(
+          "lib/assets/kwbmaid.jpeg",
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: isTablet ? 400 : 250,
+        ),
+      ),
     ],
   );
 
-  Widget _videoSection(Widget player) => Column(
-    // crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _videoSection(Widget player, bool isTablet) => Column(
     children: [
       const SizedBox(height: 25),
       const Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text("VIDEO", style: TextStyle(fontSize: 20)),
       ),
-      ClipRRect(borderRadius: BorderRadius.circular(5), child: player),
+      SizedBox(
+        height: isTablet ? 400 : 220,
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child:
+              _videoError
+                  ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.error_outline, color: Colors.red, size: 40),
+                      SizedBox(height: 8),
+                      Text(
+                        "Video not available",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ],
+                  )
+                  : (homeModel == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : player),
+        ),
+      ),
     ],
   );
 
