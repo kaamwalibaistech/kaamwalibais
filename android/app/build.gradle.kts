@@ -1,80 +1,44 @@
 plugins {
-id("com.android.application")
-id("org.jetbrains.kotlin.android")
-// The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-id("dev.flutter.flutter-gradle-plugin")
-}
-
-import java.util.Properties
-import java.io.FileInputStream
-
-// Load keystore properties BEFORE the android { } block
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-FileInputStream(keystorePropertiesFile).use { fis ->
-keystoreProperties.load(fis)
-}
+    id("com.android.application")
+    id("kotlin-android")
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
-namespace = "com.innowrap.user.kaamwalibais"
-compileSdk = flutter.compileSdkVersion
-ndkVersion = "27.0.12077973"
-compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
+    namespace = "com.innowrap.kaamwaalibais"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
-kotlinOptions {
-    jvmTarget = JavaVersion.VERSION_11.toString()
-}
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 
-defaultConfig {
-    applicationId = "com.innowrap.user.kaamwalibais"
-    minSdk = flutter.minSdkVersion
-    targetSdk = 35
-    versionCode = flutter.versionCode
-    versionName = flutter.versionName
-}
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
 
-// Signing configuration for release
-signingConfigs {
-    create("release") {
-        val alias = keystoreProperties["keyAlias"] as String?
-        val keyPass = keystoreProperties["keyPassword"] as String?
-        val storePath = keystoreProperties["storeFile"] as String?
-        val storePass = keystoreProperties["storePassword"] as String?
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.innowrap.kaamwaalibais"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
 
-        if (alias != null && keyPass != null && storePath != null && storePass != null) {
-            keyAlias = alias
-            keyPassword = keyPass
-            storeFile = file(storePath)
-            storePassword = storePass
-        } else {
-            // This helps produce a clear error if any field is missing
-            throw GradleException("Missing one or more signing properties in key.properties (keyAlias, keyPassword, storeFile, storePassword).")
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.getByName("debug")
         }
-
-       
-    
-    
     }
-}
-
-buildTypes {
-    getByName("release") {
-        signingConfig = signingConfigs.getByName("release")
-        isMinifyEnabled = true
-        
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
-    }
-}
 }
 
 flutter {
-source = "../.."
+    source = "../.."
 }

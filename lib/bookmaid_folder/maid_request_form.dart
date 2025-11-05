@@ -11,6 +11,7 @@ class MaidRequestForm extends StatefulWidget {
   final String name;
   final String email;
   final String phoneNumber;
+
   const MaidRequestForm({
     super.key,
     required this.selectedLocation,
@@ -45,6 +46,14 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
 
   bool agreeTerms = false;
 
+  /// Validation flags
+  bool showHourError = false;
+  bool showPeopleError = false;
+  bool showHouseSizeError = false;
+  bool showGenderError = false;
+  bool showAgeError = false;
+  bool showTermsError = false;
+
   final TextEditingController? commentController = TextEditingController();
 
   final List<Map<String, String>> hoursOptions = [
@@ -54,11 +63,13 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
     {"label": "6 Hours Daily", "price": "₹12000"},
     {"label": "8 Hours Daily", "price": "₹14000"},
     {"label": "10 Hours Daily", "price": "₹16000"},
-    {"label": "11 Hours Daily", "price": "₹17000"},
+    // {"label": "11 Hours Daily", "price": "₹17000"},
     {"label": "12 Hours Daily", "price": "₹18000"},
     {"label": "24 Hours Daily", "price": "₹20000"},
   ];
+
   GetUserlogIn? userData;
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +86,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Icon(Icons.arrow_back, color: Colors.white),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         title: const Text(
           "Maid Service Form",
@@ -88,62 +99,59 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// HOURS GRID
             const Text(
               "Number of hours you need the maid for *",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-
-            // Hours Selection Grid
+            const SizedBox(height: 10),
             GridView.builder(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: screenWidth < 600 ? 2 : 4,
-                childAspectRatio:
-                    screenWidth < 600
-                        ? 3
-                        : 2.5, // give more height on bigger screens
+                childAspectRatio: screenWidth < 600 ? 3 : 2.5,
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
               ),
               itemCount: hoursOptions.length,
               itemBuilder: (context, index) {
                 final option = hoursOptions[index];
+                final isSelected = selectedHours == option["label"];
+
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       selectedHours = option["label"];
                       selectedPrice = option["price"];
+                      showHourError = false;
                     });
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color:
-                          selectedHours == option["label"]
-                              ? Colors.purple
-                              : Colors.yellow[700],
+                      color: isSelected ? Colors.purple : Colors.yellow[700],
                       borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color:
+                            showHourError && selectedHours == null
+                                ? Colors.red
+                                : Colors.transparent,
+                        width: 2,
+                      ),
                     ),
                     padding: const EdgeInsets.all(8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          // 👈 prevents overflow
                           child: Text(
                             option["label"]!,
                             textAlign: TextAlign.center,
-                            overflow:
-                                TextOverflow
-                                    .ellipsis, // truncate gracefully if too long
-                            maxLines: 2, // allow wrapping to 2 lines
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style: TextStyle(
-                              color:
-                                  selectedHours == option["label"]
-                                      ? Colors.white
-                                      : Colors.black,
+                              color: isSelected ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -156,10 +164,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                             style: TextStyle(
-                              color:
-                                  selectedHours == option["label"]
-                                      ? Colors.white
-                                      : Colors.black,
+                              color: isSelected ? Colors.white : Colors.black,
                             ),
                           ),
                         ),
@@ -169,26 +174,56 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                 );
               },
             ),
+            if (showHourError && selectedHours == null)
+              const Padding(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(
+                  "Please select hours",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
 
             const SizedBox(height: 16),
 
-            // Dropdowns
+            /// PEOPLE
             buildDropdown(
               "Number of people in house *",
               ["1-2", "3-5", "6+"],
               numberOfPeople,
               (val) {
-                setState(() => numberOfPeople = val);
+                setState(() {
+                  numberOfPeople = val;
+                  showPeopleError = false;
+                });
               },
+              showError: showPeopleError && numberOfPeople == null,
             ),
+            if (showPeopleError && numberOfPeople == null)
+              const Text(
+                "Please select number of people",
+                style: TextStyle(color: Colors.red),
+              ),
+
+            /// HOUSE SIZE
             buildDropdown(
               "Size of the house *",
               ["1BHK", "2BHK", "3BHK", "Villa"],
               houseSize,
               (val) {
-                setState(() => houseSize = val);
+                setState(() {
+                  houseSize = val;
+                  showHouseSizeError = false;
+                });
               },
+              showError: showHouseSizeError && houseSize == null,
             ),
+            if (showHouseSizeError && houseSize == null)
+              const Text(
+                "Please select house size",
+                style: TextStyle(color: Colors.red),
+              ),
+
+            /// RELIGION (optional)
             buildDropdown(
               "Religion preference (if any)",
               ["Any", "Hindu", "Muslim", "Christian"],
@@ -197,6 +232,8 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                 setState(() => religion = val);
               },
             ),
+
+            /// GENDER
             const Text(
               "Gender Preferences *",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -210,7 +247,10 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                     groupValue: gender,
                     activeColor: Colors.purple,
                     onChanged: (val) {
-                      setState(() => gender = val);
+                      setState(() {
+                        gender = val;
+                        showGenderError = false;
+                      });
                     },
                   ),
                 ),
@@ -221,30 +261,43 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                     groupValue: gender,
                     activeColor: Colors.purple,
                     onChanged: (val) {
-                      setState(() => gender = val);
+                      setState(() {
+                        gender = val;
+                        showGenderError = false;
+                      });
                     },
                   ),
                 ),
               ],
             ),
+            if (showGenderError && gender == null)
+              const Text(
+                "Please select gender",
+                style: TextStyle(color: Colors.red),
+              ),
 
-            // buildDropdown("Gender Preferences *", ["Male", "Female"], gender, (
-            //   val,
-            // ) {
-            //   setState(() => gender = val);
-            // }),
+            /// AGE
             buildDropdown(
               "Age Preferences *",
               ["18-25", "26-35", "36-50", "50+"],
               agePreference,
               (val) {
-                setState(() => agePreference = val);
+                setState(() {
+                  agePreference = val;
+                  showAgeError = false;
+                });
               },
+              showError: showAgeError && agePreference == null,
             ),
+            if (showAgeError && agePreference == null)
+              const Text(
+                "Please select age preference",
+                style: TextStyle(color: Colors.red),
+              ),
 
             const SizedBox(height: 16),
 
-            // Toggles
+            /// TOGGLES (services)
             const Text(
               "HOUSEMAID",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -276,7 +329,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
 
             const SizedBox(height: 16),
 
-            // Comments
+            /// COMMENTS
             const Text("Any other Comments"),
             const SizedBox(height: 5),
             TextField(
@@ -290,13 +343,16 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
 
             const SizedBox(height: 16),
 
-            // Terms
+            /// TERMS
             Row(
               children: [
                 Checkbox(
                   value: agreeTerms,
                   onChanged: (val) {
-                    setState(() => agreeTerms = val!);
+                    setState(() {
+                      agreeTerms = val!;
+                      showTermsError = false;
+                    });
                   },
                 ),
                 const Expanded(
@@ -306,10 +362,15 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                 ),
               ],
             ),
+            if (showTermsError && !agreeTerms)
+              const Text(
+                "You must agree to terms",
+                style: TextStyle(color: Colors.red),
+              ),
 
             const SizedBox(height: 16),
 
-            // Submit Button
+            /// SUBMIT
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -317,202 +378,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                   backgroundColor: Colors.purple,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: () async {
-                  if (!agreeTerms) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // rounded corners
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ), // margin from screen edges
-                        duration: const Duration(seconds: 3),
-                        content: Row(
-                          children: [
-                            const Icon(
-                              Icons.warning_amber_rounded,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: Text(
-                                "Please agree to terms and conditions",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        action: SnackBarAction(
-                          label: "OK",
-                          textColor: Colors.white,
-                          onPressed: () {},
-                        ),
-                      ),
-                    );
-
-                    return;
-                  } else {
-                    if ((selectedHours != null && selectedHours!.isNotEmpty) &&
-                        (numberOfPeople != null &&
-                            numberOfPeople!.isNotEmpty) &&
-                        (houseSize != null && houseSize!.isNotEmpty) &&
-                        (gender != null && gender!.isNotEmpty) &&
-                        (agePreference != null && agePreference!.isNotEmpty)) {
-                      EasyLoading.show();
-                      final message = await maidEnquiryMailSendApi(
-                        widget.name ?? "",
-                        widget.phoneNumber ?? "",
-                        widget.email ?? "",
-                        widget.selectedLocation ?? "",
-                        widget.requirements ?? "",
-                        selectedHours ?? "",
-                        gender ?? "",
-                        selectedHours ?? "",
-                        selectedPrice ?? "",
-                        numberOfPeople ?? "",
-                        houseSize ?? "",
-                        religion ?? "",
-                        agePreference ?? "",
-                        widget.maidFor ?? "",
-                        commentController?.text ?? "",
-                      );
-                      if (message is String && message == "success") {
-                        /// ✅ Clear all fields after success
-                        setState(() {
-                          selectedHours = null;
-                          selectedPrice = null;
-                          numberOfPeople = null;
-                          houseSize = null;
-                          religion = null;
-                          gender = null;
-                          agePreference = null;
-                          houseMaid = false;
-                          cookingHelp = false;
-                          bathroomCleaning = false;
-                          clothesWashing = false;
-                          dusting = false;
-                          floorCleaning = false;
-                          groceryShopping = false;
-                          utensilCleaning = false;
-                          agreeTerms = false;
-                        });
-                        commentController?.clear();
-                        EasyLoading.dismiss();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            duration: const Duration(seconds: 3),
-                            content: Row(
-                              children: const [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                  size: 26,
-                                ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    "Form submitted successfully!",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        EasyLoading.dismiss();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            duration: const Duration(seconds: 3),
-                            content: Row(
-                              children: const [
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Colors.white,
-                                  size: 26,
-                                ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    "Something went wrong. Please try again!",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.orange.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          duration: const Duration(seconds: 3),
-                          content: Row(
-                            children: const [
-                              Icon(
-                                Icons.warning_amber_rounded,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  "Please fill in all required fields",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                },
+                onPressed: _handleSubmit,
                 child: const Text(
                   "SUBMIT",
                   style: TextStyle(
@@ -522,26 +388,108 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
                 ),
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
           ],
         ),
       ),
     );
   }
 
-  // Helper Widgets
+  /// Submit Handler with Validation
+  void _handleSubmit() async {
+    setState(() {
+      showHourError = selectedHours == null;
+      showPeopleError = numberOfPeople == null;
+      showHouseSizeError = houseSize == null;
+      showGenderError = gender == null;
+      showAgeError = agePreference == null;
+      showTermsError = !agreeTerms;
+    });
+
+    if (showHourError ||
+        showPeopleError ||
+        showHouseSizeError ||
+        showGenderError ||
+        showAgeError ||
+        showTermsError) {
+      return;
+    }
+
+    EasyLoading.show();
+    final message = await maidEnquiryMailSendApi(
+      widget.name,
+      widget.phoneNumber,
+      widget.email,
+      widget.selectedLocation,
+      widget.requirements,
+      selectedHours ?? "",
+      gender ?? "",
+      selectedHours ?? "",
+      selectedPrice ?? "",
+      numberOfPeople ?? "",
+      houseSize ?? "",
+      religion ?? "",
+      agePreference ?? "",
+      widget.maidFor,
+      commentController?.text ?? "",
+    );
+
+    EasyLoading.dismiss();
+
+    if (message is String && message == "success") {
+      setState(() {
+        selectedHours = null;
+        selectedPrice = null;
+        numberOfPeople = null;
+        houseSize = null;
+        religion = null;
+        gender = null;
+        agePreference = null;
+        houseMaid = false;
+        cookingHelp = false;
+        bathroomCleaning = false;
+        clothesWashing = false;
+        dusting = false;
+        floorCleaning = false;
+        groceryShopping = false;
+        utensilCleaning = false;
+        agreeTerms = false;
+      });
+      commentController?.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        _buildSnackBar(
+          "Form submitted successfully!",
+          Colors.green,
+          Icons.check_circle,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        _buildSnackBar(
+          "Something went wrong. Please try again!",
+          Colors.red,
+          Icons.error_outline,
+        ),
+      );
+    }
+  }
+
+  /// Helper: Dropdown
   Widget buildDropdown(
     String label,
     List<String> items,
     String? value,
-    ValueChanged<String?> onChanged,
-  ) {
+    ValueChanged<String?> onChanged, {
+    bool showError = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
+          errorText: showError ? "Required" : null,
         ),
         value: value,
         onChanged: onChanged,
@@ -553,12 +501,36 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
     );
   }
 
+  /// Helper: Switch
   Widget buildSwitch(String title, bool value, ValueChanged<bool> onChanged) {
     return SwitchListTile(
       title: Text(title),
       value: value,
       onChanged: onChanged,
       activeColor: Colors.purple,
+    );
+  }
+
+  /// Helper: SnackBar
+  SnackBar _buildSnackBar(String text, Color bg, IconData icon) {
+    return SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: bg,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      duration: const Duration(seconds: 3),
+      content: Row(
+        children: [
+          Icon(icon, color: Colors.white, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

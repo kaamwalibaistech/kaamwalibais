@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -7,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/bookmaid_folder/maid_request_form.dart';
 import 'package:kaamwaalibais/models/searchlocation_model.dart';
-import 'package:location/location.dart' as loc;
 
 class BookmaidScreen extends StatefulWidget {
   const BookmaidScreen({super.key});
@@ -46,13 +44,6 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
   String? selectedRequirement;
 
   Future<SearchLocationModel> getLocation(String searchKey) async {
-    log("Log: enableLocation");
-    loc.Location location = loc.Location();
-
-    if (!await location.serviceEnabled()) {
-      await location.requestService();
-    }
-
     Uri url = Uri.parse(
       "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$searchKey&components=country:in&radius=500&key=AIzaSyCJq_EIK9nmK1SHahnMofcnVkTFIe0U7cA",
     );
@@ -112,6 +103,8 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
           padding: const EdgeInsets.all(20),
           child: Form(
             key: formKey,
+            autovalidateMode:
+                AutovalidateMode.onUserInteraction, // 👈 auto validation
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -127,24 +120,10 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                 /// Name
                 TextFormField(
                   controller: nameController,
-                  decoration: InputDecoration(
-                    hintText: "Enter Your Name",
-                    labelText: "Name",
-                    prefixIcon: const Icon(Icons.person),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
+                  decoration: _inputDecoration(
+                    "Name",
+                    "Enter Your Name",
+                    Icons.person,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -161,24 +140,10 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: "Enter Your Email",
-                    labelText: "Email",
-                    prefixIcon: const Icon(Icons.email),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
+                  decoration: _inputDecoration(
+                    "Email",
+                    "Enter Your Email",
+                    Icons.email,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -198,26 +163,11 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                   controller: mobileController,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
-                  decoration: InputDecoration(
-                    hintText: "Enter Mobile Number",
-                    labelText: "Phone Number",
-                    prefixIcon: const Icon(Icons.phone),
-                    counterText: "",
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.blueGrey),
-                    ),
-                  ),
+                  decoration: _inputDecoration(
+                    "Phone Number",
+                    "Enter Mobile Number",
+                    Icons.phone,
+                  ).copyWith(counterText: ""),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Phone number is required";
@@ -237,12 +187,10 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                       final result = await getLocation(pattern);
                       if (!mounted) return [];
                       searchLocationModel = result;
-                      log(searchLocationModel!.predictions.first.description);
                       return searchLocationModel!.predictions
-                          .map((prediction) => prediction.description)
+                          .map((p) => p.description)
                           .toList();
                     } catch (e) {
-                      log(e.toString());
                       return [];
                     }
                   },
@@ -253,60 +201,64 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                     );
                   },
                   onSelected: (String suggestion) {
-                    if (!mounted) return;
                     setState(() {
                       selectedLocationSuggestion = suggestion;
                     });
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("You selected $suggestion")),
-                      );
-                    }
                   },
                   builder: (context, controller, focusNode) {
-                    if (selectedLocationSuggestion != null) {
-                      return TextField(
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: "Selected Location",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        controller: TextEditingController(
-                          text: selectedLocationSuggestion,
-                        ),
-                      );
-                    } else {
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        decoration: InputDecoration(
-                          labelText: "Search Location",
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.search),
-                        ),
-                      );
-                    }
+                    return TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      readOnly: selectedLocationSuggestion != null,
+                      decoration: _inputDecoration(
+                        "Search Location",
+                        "Enter Location",
+                        Icons.search,
+                      ),
+                      validator: (_) {
+                        if (selectedLocationSuggestion == null) {
+                          return "Location is required";
+                        }
+                        return null;
+                      },
+                    );
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
 
                 /// Maid For
                 const Text(
                   "I need maid for...",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 _buildDropdown(
                   hint: "Select",
                   value: selectedMaidFor,
                   items: maidForOptions,
                   onChanged: (value) => setState(() => selectedMaidFor = value),
+                  validator:
+                      (value) =>
+                          value == null ? "Please select a maid type" : null,
                 ),
+                const SizedBox(height: 25),
+
+                /// Requirement
+                // const Text(
+                //   "Requirement Time",
+                //   style: TextStyle(fontWeight: FontWeight.w600),
+                // ),
+                // const SizedBox(height: 10),
+                // _buildDropdown(
+                //   hint: "Select Requirement",
+                //   value: selectedRequirement,
+                //   items: requirementOptions,
+                //   onChanged:
+                //       (value) => setState(() => selectedRequirement = value),
+                //   validator:
+                //       (value) =>
+                //           value == null ? "Please select requirement" : null,
+                // ),
                 const SizedBox(height: 25),
 
                 /// Continue button
@@ -320,65 +272,33 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () async {
-                      if (selectedMaidFor == null ||
-                          selectedLocationSuggestion == null ||
-                          nameController.text.isEmpty ||
-                          mobileController.text.isEmpty ||
-                          !formKey.currentState!.validate()) {
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.redAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            duration: const Duration(seconds: 3),
-                            content: Row(
-                              children: const [
-                                Icon(
-                                  Icons.warning_amber_rounded,
-                                  color: Colors.white,
-                                  size: 26,
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => MaidRequestForm(
+                                  selectedLocation:
+                                      selectedLocationSuggestion.toString(),
+                                  maidFor: selectedMaidFor.toString(),
+                                  requirements: selectedRequirement.toString(),
+                                  name: nameController.text,
+                                  email: emailController.text,
+                                  phoneNumber: mobileController.text,
                                 ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    "Please fill all fields before continuing",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         );
-                        return;
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Please fill all the Required Fields",
+                            ),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
                       }
-
-                      if (!mounted) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MaidRequestForm(
-                                selectedLocation:
-                                    selectedLocationSuggestion.toString(),
-                                maidFor: selectedMaidFor.toString(),
-                                requirements: selectedRequirement.toString(),
-                                name: nameController.text,
-                                email: emailController.text,
-                                phoneNumber: mobileController.text,
-                              ),
-                        ),
-                      );
                     },
                     child: const Text(
                       "Continue",
@@ -394,11 +314,27 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
     );
   }
 
+  InputDecoration _inputDecoration(String label, String hint, IconData icon) {
+    return InputDecoration(
+      hintText: hint,
+      labelText: label,
+      prefixIcon: Icon(icon),
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.blueGrey),
+      ),
+    );
+  }
+
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<String> items,
     required void Function(String?) onChanged,
+    required String? Function(String?) validator,
   }) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -413,6 +349,7 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
       hint: Text(hint),
       value: value,
       onChanged: onChanged,
+      validator: validator,
       items:
           items
               .map((item) => DropdownMenuItem(value: item, child: Text(item)))

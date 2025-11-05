@@ -64,9 +64,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Scaffold(
       backgroundColor: Colors.purple,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 80),
-          Image.asset('lib/assets/kaamwalibais.png', height: 80),
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0, left: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(child: Image.asset('lib/assets/kaamwalibais.png', height: 80)),
           const SizedBox(height: 30),
           Expanded(
             child: Container(
