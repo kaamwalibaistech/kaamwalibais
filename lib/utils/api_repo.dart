@@ -37,10 +37,12 @@ Future<HomeModel?> homePageApi() async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.homePage);
 
-    final response = await http.get(url, headers: {});
+    final response = await http.get(url);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return HomeModel.fromJson(data);
+    } else {
+      return null;
     }
   } catch (e) {
     log(e.toString());
