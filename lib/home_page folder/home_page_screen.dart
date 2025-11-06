@@ -47,47 +47,58 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getReady();
-    checkForUpdate();
-
-    // Initialize with safe default video
+    // Ensure the controller is initialized ONLY ONCE
     _controller = YoutubePlayerController(
-      initialVideoId: "olDOicf6xIM",
+      initialVideoId: "olDOicf6xIM", // Use the default video ID here
       flags: const YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
     );
+    getReady();
+    checkForUpdate();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Dispose the controller when the widget is removed
+    super.dispose();
   }
 
   getReady() async {
+    // ⚠️ IMPORTANT: Don't call setState here. The controller update handles UI.
+    homePro = Provider.of<HomepageProvider>(context, listen: false);
     try {
-      homePro = Provider.of<HomepageProvider>(context, listen: false);
       final apicall = await homePro.getHomeData();
       if (!mounted) return;
 
-      setState(() {
-        homeModel = apicall;
-        final rawVideoUrl = homeModel?.getVideoUrl?.toString() ?? "";
-        String? videoId = YoutubePlayer.convertUrlToId(rawVideoUrl);
+      // Use a temporary variable to hold the video ID
+      final rawVideoUrl = apicall?.getVideoUrl?.toString() ?? "";
+      String? videoId = YoutubePlayer.convertUrlToId(rawVideoUrl);
 
-        // handle invalid or numeric video IDs
-        if (videoId == null ||
-            videoId.isEmpty ||
-            int.tryParse(videoId) != null) {
+      // Default video ID for error/invalid case
+      String defaultVideoId = "olDOicf6xIM";
+
+      if (videoId == null || videoId.isEmpty || int.tryParse(videoId) != null) {
+        // Set error state if ID is invalid, then use default
+        setState(() {
+          homeModel = apicall; // Update model data
           _videoError = true;
-          videoId = "olDOicf6xIM";
-        } else {
+        });
+        videoId = defaultVideoId;
+      } else {
+        // Clear error state and update model
+        setState(() {
+          homeModel = apicall;
           _videoError = false;
-        }
+        });
+      }
 
-        _controller = YoutubePlayerController(
-          initialVideoId: videoId,
-          flags: const YoutubePlayerFlags(autoPlay: false, hideThumbnail: true),
-        );
-      });
+      // ⭐ KEY FIX: Use the existing controller to load the new video ID
+      _controller.load(videoId);
     } catch (e) {
       debugPrint("Error loading video: $e");
       setState(() {
         _videoError = true;
       });
+      _controller.load("olDOicf6xIM"); // Load default video on API error
     }
   }
 
