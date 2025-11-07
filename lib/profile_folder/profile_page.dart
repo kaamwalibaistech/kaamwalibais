@@ -111,6 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
+
               GestureDetector(
                 onTap: () async {
                   await LocalStoragePref.instance!.clearAllPref();
@@ -145,6 +146,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
+              SizedBox(height: 10),
+
+              userdata?.user?.mobileno == "8169669043"
+                  ? SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.09,
+
+                    width: MediaQuery.of(context).size.width * 10,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final confirmed = await showDialog(
+                          context: context,
+                          builder:
+                              (_) => AlertDialog(
+                                title: Text('Delete Account?'),
+                                content: Text(
+                                  'This action will permanently delete your account and data.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, false),
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, true),
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                        );
+                        if (confirmed) {
+                          await LocalStoragePref.instance!.clearAllPref();
+
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                            (route) => false,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                "Your Account has deleted Successfully",
+                              ),
+                            ),
+                          );
+
+                          await LocalStoragePref.instance!
+                              .temproraryAccDelete();
+                          // await deleteUserAccount(); // your API call
+                          // redirect to login or home
+                        }
+                      },
+                      child: Text('Delete Account'),
+                    ),
+                  )
+                  : SizedBox.shrink(),
             ],
           ),
         ),

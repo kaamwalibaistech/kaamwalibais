@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
-import 'package:kaamwaalibais/login_signup_folder/maid_register_form.dart';
 import 'package:kaamwaalibais/login_signup_folder/opt_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/password_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/signup_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:kaamwaalibais/utils/snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -93,12 +93,29 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate() &&
                               phoneNumberController.text == "8169669043") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PasswordScreen(),
-                              ),
-                            );
+                            final accDeleted =
+                                LocalStoragePref.instance
+                                    ?.gettemproraryAccDelete() ??
+                                false;
+
+                            if (accDeleted == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    "Mobile Number is not Register",
+                                  ),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PasswordScreen(),
+                                ),
+                              );
+                            }
                           } else {
                             EasyLoading.dismiss();
 
@@ -181,32 +198,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Colors.purple,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MaidRegistrationForm(),
-                            ),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                          side: const BorderSide(color: Colors.purple),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Register as maid"),
-                            SizedBox(width: 10),
-                            Icon(Icons.arrow_right, size: 16),
-                          ],
-                        ),
-                      ),
+                      // const SizedBox(height: 10),
+                      // OutlinedButton(
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => MaidRegistrationForm(),
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: OutlinedButton.styleFrom(
+                      //     minimumSize: const Size(double.infinity, 50),
+                      //     side: const BorderSide(color: Colors.purple),
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      //   child: const Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       Text("Register as maid"),
+                      //       SizedBox(width: 10),
+                      //       Icon(Icons.arrow_right, size: 16),
+                      //     ],
+                      //   ),
+                      // ),
                       const SizedBox(height: 15),
                       ElevatedButton(
                         onPressed: () {
