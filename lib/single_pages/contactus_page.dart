@@ -142,8 +142,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           const SizedBox(height: 12),
                           _field(
                             _phoneController,
-                            'Enter Mobile contact_phone',
+                            'Enter mobile number',
                             keyboardType: TextInputType.phone,
+                            length: 10,
                           ),
                           const SizedBox(height: 12),
                           _field(
@@ -225,11 +226,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
     String hint, {
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
+    int? length,
   }) {
     return TextFormField(
       controller: c,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      maxLength: length,
       validator:
           (v) => (v == null || v.trim().isEmpty) ? 'Please enter $hint' : null,
       decoration: InputDecoration(
