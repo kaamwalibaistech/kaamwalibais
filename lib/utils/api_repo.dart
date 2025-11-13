@@ -418,7 +418,7 @@ Future<TimeslotModel?> timeSlotApi() async {
       return timeslotModelFromJson(response.body);
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }
@@ -432,10 +432,10 @@ Future<SuperCategoryModel?> fetchSuperCategories() async {
       final jsonData = json.decode(response.body);
       return SuperCategoryModel.fromJson(jsonData);
     } else {
-      print("Error: ${response.statusCode}");
+      log("Error: ${response.statusCode}");
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }

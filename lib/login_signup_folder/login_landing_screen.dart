@@ -11,7 +11,6 @@ class LoginLandingScreen extends StatefulWidget {
 class _LoginLandingScreenState extends State<LoginLandingScreen> {
   @override
   Widget build(BuildContext context) {
-    bool isLoading = false;
     return Scaffold(
       body: Column(
         children: [
