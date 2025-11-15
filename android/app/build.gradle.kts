@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.innowrap.kaamwaalibais"
+    namespace = "com.innowrap.user.kaamwalibais"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.innowrap.kaamwaalibais"
+        applicationId = "com.innowrap.user.kaamwalibais"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -49,9 +49,11 @@ android {
 
     buildTypes {
         release {
-            // Use your REAL upload keystore (NOT debug)
             signingConfig = signingConfigs.getByName("release")
+
+            // Fix for YOUR ERROR
             isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
