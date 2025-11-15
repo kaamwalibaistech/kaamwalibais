@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/opt_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/password_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/signup_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
 import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:kaamwaalibais/utils/snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,16 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              Center(
-                child: Image.asset('lib/assets/kaamwalibais.png', height: 100),
-              ),
-              const SizedBox(height: 40),
-              Expanded(
-                child: Container(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+                Center(
+                  child: Image.asset(
+                    'lib/assets/kaamwalibais.png',
+                    height: 100,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Container(
+                  height: MediaQuery.of(context).size.height,
                   width: double.infinity,
+
                   decoration: const BoxDecoration(
                     color: Color(0xFFF8F8F8),
                     borderRadius: BorderRadius.only(
@@ -82,12 +91,40 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
+                          if (_formKey.currentState!.validate() &&
+                              phoneNumberController.text == "8169669043") {
+                            final accDeleted =
+                                LocalStoragePref.instance
+                                    ?.gettemproraryAccDelete() ??
+                                false;
+
+                            if (accDeleted == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.red,
+                                  behavior: SnackBarBehavior.floating,
+                                  content: Text(
+                                    "Mobile Number is not Register",
+                                  ),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PasswordScreen(),
+                                ),
+                              );
+                            }
+                          } else {
+                            EasyLoading.dismiss();
+
                             GetUserlogIn? data = await getUserLogIn(
                               phoneNumberController.text,
                             );
                             String otpData = data?.otp ?? "";
                             if (data != null) {
+                              EasyLoading.dismiss();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -99,7 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
                             } else {
-                              failledToast(context);
+                              EasyLoading.dismiss();
+
+                              failledToast(
+                                context,
+                                "Mobile Number is Not Register",
+                              );
                             }
                           }
                         },
@@ -156,28 +198,42 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Colors.purple,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                          side: const BorderSide(color: Colors.purple),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Register as maid"),
-                            SizedBox(width: 10),
-                            Icon(Icons.arrow_right, size: 16),
-                          ],
-                        ),
-                      ),
+                      // const SizedBox(height: 10),
+                      // OutlinedButton(
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => MaidRegistrationForm(),
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: OutlinedButton.styleFrom(
+                      //     minimumSize: const Size(double.infinity, 50),
+                      //     side: const BorderSide(color: Colors.purple),
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      //   child: const Row(
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: [
+                      //       Text("Register as maid"),
+                      //       SizedBox(width: 10),
+                      //       Icon(Icons.arrow_right, size: 16),
+                      //     ],
+                      //   ),
+                      // ),
                       const SizedBox(height: 15),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigationScreen(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                           backgroundColor:
@@ -205,8 +261,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

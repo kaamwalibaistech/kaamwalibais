@@ -31,6 +31,13 @@ class LocalStoragePref {
     );
   }
 
+  Future<void> temproraryAccDelete() async {
+    await storage?.setBool(LocalStorageKeys.accDelete, true);
+  }
+
+  bool? gettemproraryAccDelete() {
+    return storage?.getBool(LocalStorageKeys.accDelete);
+  }
   // Future<void> storeUserPhoto(File photo) async {
   //   final bytes = photo.path;
   //   // String data = bytes.substring(7, bytes.length - 1);
@@ -86,6 +93,14 @@ class LocalStoragePref {
     return storage?.getBool(LocalStorageKeys.isLoggedIn);
   }
 
+  Future<void> setLoginTocken(String value) async {
+    await storage?.setString(LocalStorageKeys.token, value);
+  }
+
+  String? gsetLoginTocken() {
+    return storage?.getString(LocalStorageKeys.token);
+  }
+
   // Future<void> setAmenitiesBool(bool value) async {
   //   await storage?.setBool(LocalStorageKeys.isAmenitiesAdded, value);
   // }
@@ -114,6 +129,8 @@ class LocalStoragePref {
 class LocalStorageKeys {
   static const userProfile = 'user_profile';
   static const isLoggedIn = 'isLoggedIn';
+  static const token = 'token';
+  static const accDelete = 'token';
   // static const userPhotoo = 'user_photo';
   // static const isAmenitiesAdded = 'is_amenities_added';
   // static const isBankAdded = 'is_bank_added';

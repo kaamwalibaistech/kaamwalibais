@@ -1,15 +1,40 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
+import 'package:kaamwaalibais/models/maidlist_model.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maid_details_screen.dart';
+import 'package:kaamwaalibais/ourmiad_folder/shimmer.dart';
+import 'package:kaamwaalibais/single_pages/contactus_page.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
+import 'package:kaamwaalibais/utils/local_storage.dart';
 
-class OurMaidsScreen extends StatelessWidget {
+class OurMaidsScreen extends StatefulWidget {
   const OurMaidsScreen({super.key});
 
   @override
+  State<OurMaidsScreen> createState() => _OurMaidsScreenState();
+}
+
+class _OurMaidsScreenState extends State<OurMaidsScreen> {
+  MaidlistModel? maidlistModel;
+  @override
+  void initState() {
+    super.initState();
+    gatMaidList();
+  }
+
+  gatMaidList() async {
+    String token = LocalStoragePref().gsetLoginTocken() ?? "";
+    final data = await maidLists(token);
+    if (mounted) {
+      setState(() {
+        maidlistModel = data;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // <<<<<<< HEAD
-    //     return const Scaffold(body: Center(child: Text("Our Maids Screen")));
-    // =======
     return PopScope(
       canPop: false,
       onPopInvokedWithResult:
@@ -37,100 +62,133 @@ class OurMaidsScreen extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        body: ListView.builder(
-          padding: EdgeInsets.all(12),
-          itemCount: 100,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OurMaidDetailsScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(10),
-                margin: EdgeInsets.only(bottom: 5),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        "lib/assets/test.jpg",
-                        width: 150,
-                        // height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Ashadevi Yadav",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Powai Mumbai, Mumbai",
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "52 | Female",
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                          SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: -8,
-                            children: [
-                              Chip(
-                                label: Text("Housemaid"),
-                                backgroundColor: Colors.deepPurple[50],
-                                labelStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 12,
+        body:
+            maidlistModel == null
+                ? MaidsShimmer()
+                : ListView.builder(
+                  padding: EdgeInsets.all(12),
+                  itemCount: maidlistModel?.data?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final maid = maidlistModel?.data?[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => OurMaidDetailsScreen(
+                                  data: maidlistModel?.data?[index],
                                 ),
-                              ),
-                            ],
                           ),
-                          SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 40,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                              onPressed: () {},
-                              child: Text(
-                                'HIRE ME',
-                                style: TextStyle(color: Colors.white),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.only(bottom: 5),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: maid?.photo ?? "",
+                                width: 150,
+                                // height: 100,
+                                fit: BoxFit.cover,
+                                placeholder:
+                                    (context, url) => Container(
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withAlpha(100),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
                               ),
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    maid?.name ?? "",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    maid?.address ?? "",
+                                    style: TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "${maid?.age ?? ""} | ${maid?.gender ?? ""}",
+                                    style: TextStyle(color: Colors.grey[700]),
+                                  ),
+                                  SizedBox(height: 6),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: -8,
+                                    children: [
+                                      Chip(
+                                        label: Text(
+                                          "Exp. ${maid?.workExperience ?? ""} Years",
+                                        ),
+                                        backgroundColor: Colors.deepPurple[50],
+                                        labelStyle: TextStyle(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 40,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => ContactUsPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'HIRE ME',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
-        ),
       ),
     );
-    // >>>>>>> 19a109dae15fa07f04f297b7688c1762783c2f08
   }
 }

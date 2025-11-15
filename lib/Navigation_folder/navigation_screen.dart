@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/bookmaid_folder/bookmaid_screen.dart';
 import 'package:kaamwaalibais/home_page%20folder/home_page_screen.dart';
 import 'package:kaamwaalibais/login_signup_folder/login_landing_screen.dart';
+import 'package:kaamwaalibais/login_signup_folder/login_screen.dart';
 import 'package:kaamwaalibais/ourmiad_folder/our_maids_screen.dart';
 import 'package:kaamwaalibais/profile_folder/profile_page.dart';
 import 'package:kaamwaalibais/single_pages/how_works_page.dart';
@@ -14,6 +15,9 @@ import 'package:kaamwaalibais/single_pages/what_we_offer.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../single_pages/aboutus_page.dart';
+import '../single_pages/contactus_page.dart';
 
 class NavigationScreen extends StatefulWidget {
   final int destinations;
@@ -73,7 +77,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       isLoggedin = loggedIn;
       navigationList = [
         MyHomePage(),
-        isLoggedin! ? BookmaidScreen() : LoginLandingScreen(),
+        BookmaidScreen(),
         isLoggedin! ? OurMaidsScreen() : LoginLandingScreen(),
         isLoggedin! ? ProfileScreen() : LoginLandingScreen(),
       ];
@@ -118,7 +122,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
           selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Colors.grey,
           currentIndex: index,
-          onTap: onTapChange,
+          onTap: (value) {
+            onTapChange(value);
+          },
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
@@ -140,19 +146,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   backgroundColor: Colors.transparent,
                   title: const Text(
-                    "Kaamwalibais",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    "Kaamwalibais.com",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                   ),
                   actions: [
-                    // <<<<<<< ritesh
-                    //                     Image.asset("lib/assets/whatsapp.png", height: 35),
-                    // =======
                     IconButton(
                       onPressed:
                           () => _launchUrl("https://wa.me/+919819221144"),
                       icon: Image.asset("lib/assets/whatsapp.png", height: 35),
                     ),
-                    // >>>>>>> main
+
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: IconButton(
@@ -232,39 +235,82 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           );
                         },
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Divider(),
-                              TextButton.icon(
-                                // <<<<<<< ritesh
-                                //                                 onPressed: () {},
-                                //                                 label: const Text(
-                                // =======
-                                onPressed: () => shareApp(),
-                                label: Text(
-                                  // >>>>>>> main
-                                  "Share",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                icon: const Icon(Icons.share),
+
+                      isLoggedin ?? false
+                          ? Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Divider(),
+                                  TextButton.icon(
+                                    onPressed: () => shareApp(),
+                                    label: Text(
+                                      "Share",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.share),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () async {
+                                      await LocalStoragePref.instance!
+                                          .clearAllPref();
+
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginScreen(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    },
+                                    label: const Text(
+                                      "Sign Out",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.logout),
+                                  ),
+                                ],
                               ),
-                              TextButton.icon(
-                                onPressed: () {},
-                                label: const Text(
-                                  "Sign Out",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                icon: const Icon(Icons.logout),
+                            ),
+                          )
+                          : Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Divider(),
+                                  TextButton.icon(
+                                    onPressed: () => shareApp(),
+                                    label: Text(
+                                      "Share",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.share),
+                                  ),
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginScreen(),
+                                        ),
+                                      );
+                                    },
+                                    label: const Text(
+                                      "Log In",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    icon: const Icon(Icons.logout),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
                       SizedBox(
                         height: MediaQuery.of(context).viewPadding.bottom,
                       ),
@@ -294,38 +340,29 @@ class _NavigationScreenState extends State<NavigationScreen> {
         Navigator.pop(context);
         break;
       case 1:
-        // <<<<<<< ritesh
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(builder: (context) => BookmaidScreen()),
-        //         );
-        // =======
-        {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BookmaidScreen()),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BookmaidScreen()),
+        );
         break;
       case 2:
-        {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WhatWeOffer()),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => WhatWeOffer()),
+        );
         break;
       case 3:
-        {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HowWorksPage()),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HowWorksPage()),
+        );
+        log(index.toString());
         break;
       case 4: //about us
-        {}
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AboutUsPage()),
+        );
         break;
       case 5:
         Navigator.push(
@@ -333,35 +370,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
           MaterialPageRoute(builder: (context) => ReviewPage()),
         );
         break;
-      case 6: //contact us
-        {
-          // {
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => TermConditionPage()),
-          //   );
-          // }
-        }
+      case 6:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ContactUsPage()),
+        );
         break;
       case 7:
-        {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TermConditionPage()),
-            );
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TermConditionPage()),
+        );
         break;
       case 8:
-        {
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PrivacyPolicy()),
-            );
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+        );
         break;
 
       default:

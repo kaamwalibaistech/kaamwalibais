@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:kaamwaalibais/Navigation_folder/navigation_screen.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
+import 'package:kaamwaalibais/utils/api_repo.dart';
 import 'package:kaamwaalibais/utils/local_storage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -33,6 +34,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (secondsRemaining > 0) {
         setState(() {
@@ -62,9 +64,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Scaffold(
       backgroundColor: Colors.purple,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 80),
-          Image.asset('lib/assets/kaamwalibais.png', height: 80),
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0, left: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(child: Image.asset('lib/assets/kaamwalibais.png', height: 80)),
           const SizedBox(height: 30),
           Expanded(
             child: Container(
@@ -129,13 +141,32 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         ),
                       ),
                       const SizedBox(width: 5),
-                      Text(
-                        "$secondsRemaining s",
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 16,
-                        ),
-                      ),
+                      secondsRemaining != 0
+                          ? Text(
+                            "$secondsRemaining s",
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          )
+                          : InkWell(
+                            onTap: () {
+                              setState(() {
+                                secondsRemaining = 30;
+                                startTimer();
+                              });
+                            },
+                            child: const Text(
+                              "Click here",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.green,
+                                decorationThickness: 2,
+                              ),
+                            ),
+                          ),
                     ],
                   ),
 
@@ -150,8 +181,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ),
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (pinCodeText == widget.otp) {
+                        int? status = await otpVarifyApi(
+                          widget.otp,
+                          widget.userData?.user?.id ?? "",
+                          context,
+                        );
+                        if (status != null || status == 201) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigationScreen(),
+                            ),
+                          );
+                        }
                         LocalStoragePref.instance?.storeLoginModel(
                           widget.userData!,
                         );
@@ -166,12 +210,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         // ScaffoldMessenger.of(
                         //   context,
                         // ).showSnackBar(SnackBar(content: Text("Success")));
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NavigationScreen(),
-                          ),
-                        );
                       } else {
                         ScaffoldMessenger.of(
                           context,
