@@ -305,6 +305,7 @@ Future<String?> maidEnquiryMailSendApi(
   String? agePreference,
   String? maidFor,
   String? comments,
+  String? platform,
 ) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.sendMailEnquiry);
@@ -325,6 +326,7 @@ Future<String?> maidEnquiryMailSendApi(
       "age_pref": agePreference ?? "",
       "service": maidFor ?? "",
       "other_comments": comments ?? "",
+      "platform": platform ?? "",
     };
 
     final response = await http.post(
