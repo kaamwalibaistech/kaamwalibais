@@ -195,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
     borderRadius: BorderRadius.circular(10),
     child: CachedNetworkImage(
       imageUrl:
-          homeModel?.getSliderList?[0].photo ??
+          // homeModel?.getSliderList?[0].photo ??
           "https://kamwalibais.com/admin/images/slider/slider-11526456763.jpg",
       fit: BoxFit.cover,
       width: double.infinity,

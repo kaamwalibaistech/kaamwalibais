@@ -222,11 +222,16 @@ class _MaidRegistrationFormState extends State<MaidRegistrationForm> {
                     ageController,
                     keyboard: TextInputType.number,
                   ),
-                  buildDropdown("Gender *", ["Male", "Female"], gender, (val) {
-                    setState(() => gender = val);
-                  }),
                   buildDropdown(
-                    "Marital Status *",
+                    "Gender (optional)",
+                    ["Male", "Female"],
+                    gender,
+                    (val) {
+                      setState(() => gender = val);
+                    },
+                  ),
+                  buildDropdown(
+                    "Marital Status (optional)",
                     ["Single", "Married", "Widow"],
                     maritalStatus,
                     (val) {
@@ -236,7 +241,7 @@ class _MaidRegistrationFormState extends State<MaidRegistrationForm> {
                   DropdownButtonFormField<String>(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: const InputDecoration(
-                      labelText: "Select Religion",
+                      labelText: "Select Religion (optional)",
                       border: OutlineInputBorder(),
                     ),
                     value: selectedReligion,
@@ -370,12 +375,12 @@ class _MaidRegistrationFormState extends State<MaidRegistrationForm> {
                   ),
 
                   buildFilePicker(
-                    "PAN No.",
+                    "PAN No. (optional)",
                     panCard,
                     (f) => setState(() => panCard = f),
                   ),
                   buildFilePicker(
-                    "Aadhaar Card No.",
+                    "Aadhaar Card No. (optional)",
                     aadhaarCard,
                     (f) => setState(() => aadhaarCard = f),
                   ),
@@ -455,7 +460,7 @@ class _MaidRegistrationFormState extends State<MaidRegistrationForm> {
                         phoneController.text,
                         ageController.text,
                         maritalStatus ?? "",
-                        gender ?? "",
+                        gender ?? "Not prefer to say",
                         selectedReligion.toString(),
                         workExp ?? "",
                         selectedPackage ?? "",
@@ -596,7 +601,7 @@ class _MaidRegistrationFormState extends State<MaidRegistrationForm> {
       child: DropdownButtonFormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         value: value,
-        validator: (val) => (val == null || val.isEmpty) ? "Required" : null,
+        // validator: (val) => (val == null || val.isEmpty) ? "Required" : null,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
