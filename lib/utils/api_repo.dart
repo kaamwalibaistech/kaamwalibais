@@ -37,10 +37,12 @@ Future<HomeModel?> homePageApi() async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.homePage);
 
-    final response = await http.get(url, headers: {});
+    final response = await http.get(url);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return HomeModel.fromJson(data);
+    } else {
+      return null;
     }
   } catch (e) {
     log(e.toString());
@@ -303,6 +305,7 @@ Future<String?> maidEnquiryMailSendApi(
   String? agePreference,
   String? maidFor,
   String? comments,
+  String? platform,
 ) async {
   try {
     final url = Uri.parse(ApiRoutes.url + ApiRoutes.sendMailEnquiry);
@@ -323,6 +326,7 @@ Future<String?> maidEnquiryMailSendApi(
       "age_pref": agePreference ?? "",
       "service": maidFor ?? "",
       "other_comments": comments ?? "",
+      "platform": platform ?? "",
     };
 
     final response = await http.post(
@@ -416,7 +420,7 @@ Future<TimeslotModel?> timeSlotApi() async {
       return timeslotModelFromJson(response.body);
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }
@@ -430,10 +434,10 @@ Future<SuperCategoryModel?> fetchSuperCategories() async {
       final jsonData = json.decode(response.body);
       return SuperCategoryModel.fromJson(jsonData);
     } else {
-      print("Error: ${response.statusCode}");
+      log("Error: ${response.statusCode}");
     }
   } catch (e) {
-    print("Exception: $e");
+    log("Exception: $e");
   }
   return null;
 }
