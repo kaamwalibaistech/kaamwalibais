@@ -1,4 +1,4 @@
-package com.innowrap.kaamwaalibais
+package com.innowrap.user.kaamwalibais
 
 import io.flutter.embedding.android.FlutterActivity
 

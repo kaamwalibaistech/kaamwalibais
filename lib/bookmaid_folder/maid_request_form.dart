@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:kaamwaalibais/models/user_login_model.dart';
@@ -395,7 +397,6 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
     );
   }
 
-  /// Submit Handler with Validation
   void _handleSubmit() async {
     setState(() {
       showHourError = selectedHours == null;
@@ -416,6 +417,9 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
     }
 
     EasyLoading.show();
+
+    String platform = Platform.isIOS ? "ios" : "android";
+
     final message = await maidEnquiryMailSendApi(
       widget.name,
       widget.phoneNumber,
@@ -432,7 +436,7 @@ class _MaidRequestFormState extends State<MaidRequestForm> {
       agePreference ?? "",
       widget.maidFor,
       commentController?.text ?? "",
-      "android",
+      platform,
     );
 
     EasyLoading.dismiss();
