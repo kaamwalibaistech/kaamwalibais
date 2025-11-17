@@ -103,8 +103,8 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
           padding: const EdgeInsets.all(20),
           child: Form(
             key: formKey,
-            autovalidateMode:
-                AutovalidateMode.onUserInteraction, // 👈 auto validation
+            // autovalidateMode:
+            //     AutovalidateMode.onUserInteraction, //  auto validation
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -181,6 +181,7 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
 
                 /// Location (TypeAhead)
                 TypeAheadField<String>(
+                  controller: locationValue,
                   suggestionsCallback: (pattern) async {
                     if (pattern.isEmpty) return [];
                     try {
@@ -203,6 +204,7 @@ class _BookmaidScreenState extends State<BookmaidScreen> {
                   onSelected: (String suggestion) {
                     setState(() {
                       selectedLocationSuggestion = suggestion;
+                      locationValue.text = suggestion;
                     });
                   },
                   builder: (context, controller, focusNode) {
